@@ -1,0 +1,45 @@
+# Odvisnosti
+node_modules/
+.pnpm-store/
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+
+# Build
+dist/
+build/
+*.tsbuildinfo
+
+# Okoljske spremenljivke (.env.example se commita)
+.env
+.env.*
+!.env.example
+
+# Naložene datoteke (fotografije živali v razvoju)
+uploads/
+
+# Testi
+coverage/
+playwright-report/
+test-results/
+blob-report/
+
+# Dnevniki
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+*.log
+
+# Operacijski sistem in urejevalniki
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+
+# Vercel
+.vercel
