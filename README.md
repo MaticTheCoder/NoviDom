@@ -58,4 +58,4 @@ Repozitorij uporablja [GitHub Flow](https://docs.github.com/en/get-started/using
 
 ## Avtor
 
-Matic <priimek>, FERI UM, predmet RIRS
+Matic Koren, FERI UM, predmet RIRS
