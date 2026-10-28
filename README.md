@@ -55,3 +55,7 @@ Zapisane po predlogi [MADR](https://adr.github.io/madr/), predloga: [`docs/adr/a
 ## Razvojni proces
 
 Repozitorij uporablja [GitHub Flow](https://docs.github.com/en/get-started/using-github/github-flow). Veja `main` je zaščitena: spremembe se vanjo združujejo izključno prek pull requestov iz kratkoživih vej (`feature/…`, `fix/…`, `docs/…`).
+
+## Avtor
+
+Matic <priimek>, FERI UM, predmet RIRS
