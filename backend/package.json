@@ -5,7 +5,9 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./db": "./src/db.ts"
+    "./db": "./src/db.ts",
+    "./auth": "./src/auth/index.ts",
+    "./access": "./src/auth/access.ts"
   },
   "scripts": {
     "postinstall": "prisma generate",
