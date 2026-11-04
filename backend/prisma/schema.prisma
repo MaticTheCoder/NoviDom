@@ -1,0 +1,11 @@
+// Shema podatkovnega modela (docs/03-podatkovni-model.md).
+// Modeli se dodajajo z nalogami posameznih uporabniških zgodb (npr. #4 Animal).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}

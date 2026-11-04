@@ -1,0 +1,31 @@
+# Lokalne odvisnosti za razvoj (ADR-0009): PostgreSQL 16 in Mailpit.
+# Zagon: docker compose up -d
+name: novi-dom
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: novidom
+      POSTGRES_PASSWORD: novidom
+      POSTGRES_DB: novidom
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U novidom -d novidom"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # spletni vmesnik
+
+volumes:
+  db-data:
