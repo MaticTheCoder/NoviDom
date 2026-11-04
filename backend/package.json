@@ -7,7 +7,9 @@
     ".": "./src/index.ts",
     "./db": "./src/db.ts",
     "./auth": "./src/auth/index.ts",
-    "./access": "./src/auth/access.ts"
+    "./access": "./src/auth/access.ts",
+    "./validation": "./src/validation/animal.ts",
+    "./enums": "./src/generated/prisma/enums.ts"
   },
   "scripts": {
     "postinstall": "prisma generate",
