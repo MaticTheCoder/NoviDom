@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Mačka – nadomestna fotografija">
+  <rect width="400" height="300" fill="#b9c4d6"/>
+  <g fill="#ffffff" fill-opacity="0.85">
+    <ellipse cx="200" cy="185" rx="48" ry="40"/>
+    <ellipse cx="138" cy="128" rx="20" ry="26"/>
+    <ellipse cx="178" cy="98" rx="20" ry="27"/>
+    <ellipse cx="222" cy="98" rx="20" ry="27"/>
+    <ellipse cx="262" cy="128" rx="20" ry="26"/>
+  </g>
+</svg>

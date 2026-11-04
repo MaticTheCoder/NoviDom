@@ -1,5 +1,5 @@
 // Shema podatkovnega modela (docs/03-podatkovni-model.md).
-// Modeli se dodajajo z nalogami posameznih uporabniških zgodb (npr. #4 Animal).
+// Modeli se dodajajo z nalogami posameznih uporabniških zgodb.
 
 generator client {
   provider = "prisma-client"
@@ -8,4 +8,122 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Uporabniki
+// ---------------------------------------------------------------------------
+
+enum Role {
+  ADOPTER   // posvojitelj
+  VOLUNTEER // prostovoljec
+  MANAGER   // vodja zavetišča
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique
+  passwordHash String
+  name         String
+  phone        String?
+  role         Role
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  animalsCreated Animal[] @relation("AnimalCreatedBy")
+}
+
+// ---------------------------------------------------------------------------
+// Živali
+// ---------------------------------------------------------------------------
+
+enum Species {
+  DOG
+  CAT
+}
+
+enum Sex {
+  MALE
+  FEMALE
+}
+
+enum AnimalSize {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+enum EnergyLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+// Primernost za otroke: OVER_6 = primerna le za otroke, starejše od 6 let.
+enum KidsCompatibility {
+  YES
+  OVER_6
+  NO
+  UNKNOWN
+}
+
+enum Compatibility {
+  YES
+  NO
+  UNKNOWN
+}
+
+// INTAKE = sprejeta, AVAILABLE = na voljo, RESERVED = rezervirana, ADOPTED = posvojena.
+// RESERVED in ADOPTED žival dobi le prek odobritve vloge oziroma zaključka posvojitve (US-01 AC 4).
+enum AnimalStatus {
+  INTAKE
+  AVAILABLE
+  RESERVED
+  ADOPTED
+}
+
+model Animal {
+  id              String       @id @default(uuid()) @db.Uuid
+  name            String
+  species         Species
+  sex             Sex
+  birthDateApprox DateTime     @db.Date
+  description     String       @default("")
+  internalNotes   String       @default("") // vedenjske opombe, vidne samo osebju
+
+  // Vedenjske lastnosti. Ob sprejemu so lahko še neznane (null = ni vneseno);
+  // žival je mogoče označiti kot na voljo šele, ko nobena ni null (US-01 AC 2).
+  // Vrednost UNKNOWN velja kot izpolnjena.
+  size         AnimalSize?
+  energyLevel  EnergyLevel?
+  needsGarden  Boolean?
+  goodWithKids KidsCompatibility?
+  goodWithDogs Compatibility?
+  goodWithCats Compatibility?
+
+  // Osnovne oznake (ni veterinarska kartoteka).
+  isChipped    Boolean @default(false)
+  isVaccinated Boolean @default(false)
+  isNeutered   Boolean @default(false)
+
+  status      AnimalStatus @default(INTAKE)
+  intakeDate  DateTime     @default(now()) @db.Date
+  createdById String       @db.Uuid
+  createdBy   User         @relation("AnimalCreatedBy", fields: [createdById], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  photos AnimalPhoto[]
+
+  @@index([status, species])
+}
+
+model AnimalPhoto {
+  id        String @id @default(uuid()) @db.Uuid
+  animalId  String @db.Uuid
+  animal    Animal @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  url       String
+  sortOrder Int    @default(0) // najnižja je naslovna fotografija
+
+  @@index([animalId, sortOrder])
 }

@@ -28,6 +28,16 @@ Delovanje povezave z bazo preveriš na `http://localhost:3000/api/health`.
 | `pnpm test` | enotski testi (Vitest) |
 | `pnpm db:studio` | Prisma Studio za pregled baze |
 
+### Testni uporabniki
+
+`pnpm db:seed` ustvari spodnje račune (vsi z geslom `NoviDom123!`) in 10 živali (8 *na voljo*, 2 *sprejeti*).
+
+| E-pošta | Vloga |
+|---|---|
+| `vodja@novidom.si` | vodja zavetišča |
+| `prostovoljec1@novidom.si`, `prostovoljec2@novidom.si` | prostovoljec |
+| `ana@example.com`, `marko@example.com` | posvojitelj |
+
 ## Tehnologije
 
 | Področje | Tehnologije |

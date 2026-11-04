@@ -43,17 +43,19 @@ Razmerje 1 : 1 z uporabnikom z vlogo `ADOPTER`.
 | species | enum `DOG`, `CAT` | |
 | sex | enum `MALE`, `FEMALE` | |
 | birthDateApprox | date | ocenjen datum rojstva |
-| size | enum `SMALL`, `MEDIUM`, `LARGE` | |
-| energyLevel | enum `LOW`, `MEDIUM`, `HIGH` | |
-| goodWithKids | enum `YES`, `OVER_6`, `NO`, `UNKNOWN` | |
-| goodWithDogs, goodWithCats | enum `YES`, `NO`, `UNKNOWN` | |
-| needsGarden | boolean | |
+| size | enum `SMALL`, `MEDIUM`, `LARGE`, nullable | vedenjska lastnost* |
+| energyLevel | enum `LOW`, `MEDIUM`, `HIGH`, nullable | vedenjska lastnost* |
+| goodWithKids | enum `YES`, `OVER_6`, `NO`, `UNKNOWN`, nullable | vedenjska lastnost* |
+| goodWithDogs, goodWithCats | enum `YES`, `NO`, `UNKNOWN`, nullable | vedenjska lastnost* |
+| needsGarden | boolean, nullable | vedenjska lastnost* |
 | isChipped, isVaccinated, isNeutered | boolean | osnovne oznake (ni veterinarska kartoteka) |
 | description | text | javni opis |
 | internalNotes | text | vedenjske opombe, vidni samo osebju |
 | status | enum `INTAKE`, `AVAILABLE`, `RESERVED`, `ADOPTED` | |
 | intakeDate | date | datum sprejema v zavetišče |
 | createdById | UUID, FK → User | vodja, ki je vnesel žival |
+
+\* Vedenjske lastnosti ob sprejemu živali še niso nujno znane, zato so lahko prazne (`null`). Žival je mogoče označiti kot *na voljo* šele, ko nobena ni prazna; vrednost `UNKNOWN` (»neznano«) velja kot izpolnjena (US-01, AC 2).
 
 ### AnimalPhoto (Fotografija živali)
 
