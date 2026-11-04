@@ -67,7 +67,7 @@ const ANIMALS: SeedAnimal[] = [
     size: "MEDIUM", energyLevel: "LOW", needsGarden: false,
     goodWithKids: "YES", goodWithDogs: "NO", goodWithCats: "YES",
     isChipped: true, isVaccinated: true, isNeutered: true, status: "AVAILABLE",
-    description: "Lenoben mačak, ki obožuje crkljanje.",
+    description: "Len maček, ki obožuje crkljanje.",
   },
   {
     name: "Mica", species: "CAT", sex: "FEMALE", birthDateApprox: yearsAgo(0.5),
@@ -88,7 +88,7 @@ const ANIMALS: SeedAnimal[] = [
     size: "LARGE", energyLevel: "MEDIUM", needsGarden: true,
     goodWithKids: "UNKNOWN", goodWithDogs: "NO", goodWithCats: "UNKNOWN",
     isChipped: true, isVaccinated: true, isNeutered: true, status: "AVAILABLE",
-    description: "Velik mačak, navajen izhodov na vrt.",
+    description: "Velik maček, navajen izhodov na vrt.",
   },
   {
     // Namerno brez vedenjskih lastnosti: gumba »Označi kot na voljo« ne bo mogoče uporabiti (US-01 AC 2).

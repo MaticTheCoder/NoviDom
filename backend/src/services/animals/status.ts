@@ -79,7 +79,7 @@ export function assertStatusChangeAllowed(
     if (missing.length > 0) {
       throw new DomainError(
         AnimalStatusErrorCode.MissingBehaviorAttributes,
-        `Žival ni mogoče označiti kot na voljo. Manjkajoče lastnosti: ${missing.map((m) => m.label).join(", ")}.`,
+        `Živali ni mogoče označiti kot na voljo. Manjkajoče lastnosti: ${missing.map((m) => m.label).join(", ")}.`,
         { missing },
       );
     }
@@ -88,7 +88,7 @@ export function assertStatusChangeAllowed(
   if (target === "INTAKE" && activeApplicationCount > 0) {
     throw new DomainError(
       AnimalStatusErrorCode.HasActiveApplications,
-      `Žival ni mogoče vrniti v status »sprejeta«, ker ima ${formatActiveApplications(activeApplicationCount)}.`,
+      `Živali ni mogoče vrniti v status »sprejeta«, ker ima ${formatActiveApplications(activeApplicationCount)}.`,
       { activeApplicationCount },
     );
   }
