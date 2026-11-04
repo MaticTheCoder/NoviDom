@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
 // latin-ext vsebuje šumnike (č, š, ž).
@@ -24,8 +25,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sl">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    // Spremenljivke pisav morajo biti na <html>, ker globals.css nanj nastavi font-sans.
+    <html lang="sl" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className="flex min-h-screen flex-col antialiased">
+        <SiteHeader />
         {children}
       </body>
     </html>
