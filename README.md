@@ -4,7 +4,29 @@ Spletna platforma, prek katere zavetišče za živali vodi celoten postopek posv
 
 **Uporabniške vloge:** obiskovalec, posvojitelj, prostovoljec, vodja zavetišča.
 
-> Projekt je v fazi zasnove. Mapi `frontend/` in `backend/` sta zaenkrat prazni.
+## Lokalni zagon
+
+Predpogoji: Node.js 22 LTS (`.nvmrc`), pnpm in Docker.
+
+```bash
+cp .env.example .env     # DATABASE_URL, AUTH_SECRET, SMTP_*
+docker compose up -d     # PostgreSQL 16 (port 5432) in Mailpit (UI na http://localhost:8025)
+pnpm install             # odvisnosti za frontend/ in backend/, generira Prisma Client
+pnpm db:migrate          # migracije baze
+pnpm db:seed             # testni podatki
+pnpm dev                 # aplikacija na http://localhost:3000
+```
+
+Delovanje povezave z bazo preveriš na `http://localhost:3000/api/health`.
+
+| Ukaz | Opis |
+|---|---|
+| `pnpm dev` | razvojni strežnik Next.js |
+| `pnpm build` | produkcijski build |
+| `pnpm lint` | ESLint |
+| `pnpm typecheck` | preverjanje tipov v obeh paketih |
+| `pnpm test` | enotski testi (Vitest) |
+| `pnpm db:studio` | Prisma Studio za pregled baze |
 
 ## Tehnologije
 

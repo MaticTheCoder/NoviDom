@@ -43,3 +43,9 @@ Thumbs.db
 
 # Vercel
 .vercel
+
+# Certifikati
+*.pem
+
+# Generiran Prisma Client
+backend/src/generated/
