@@ -17,6 +17,7 @@ export const SubmitErrorCode = {
   AnimalNotAvailable: "APPLICATION_ANIMAL_NOT_AVAILABLE",
   AlreadyActive: "APPLICATION_ALREADY_ACTIVE",
   TooManyActive: "APPLICATION_TOO_MANY_ACTIVE",
+  WarningsNotAcknowledged: "APPLICATION_WARNINGS_NOT_ACKNOWLEDGED",
 } as const;
 
 export const alreadyActiveError = (applicationId?: string) =>
@@ -66,7 +67,7 @@ export async function submitApplication(actor: Actor, raw: unknown): Promise<App
     for (const issue of parsed.error.issues) fieldErrors[issue.path.join(".") || "_"] ??= issue.message;
     throw new DomainError(SubmitErrorCode.Validation, "Podatki vloge niso veljavni.", { fieldErrors });
   }
-  const { animalId, motivation } = parsed.data;
+  const { animalId, motivation, acknowledgeWarnings } = parsed.data;
 
   try {
     return await prisma.$transaction(async (tx) => {
@@ -77,6 +78,15 @@ export async function submitApplication(actor: Actor, raw: unknown): Promise<App
 
       const { animal, household } = await checkSubmissionRules(tx, adopter.id, animalId);
       const match = assessMatch(household, animal);
+      // Ocena se izračuna na strežniku iz trenutnih podatkov, zato potrditev velja tudi,
+      // če se je vprašalnik ali žival spremenila po odprtju strani (US-03 AC 5).
+      if (match.level === "MISMATCH" && !acknowledgeWarnings) {
+        throw new DomainError(
+          SubmitErrorCode.WarningsNotAcknowledged,
+          "Ocena ujemanja je »Neujemanje«. Pred oddajo potrdite, da ste seznanjeni z opozorili.",
+          { fieldErrors: { acknowledgeWarnings: "Potrdite, da ste seznanjeni z opozorili." }, matchLevel: match.level },
+        );
+      }
 
       const application = await tx.application.create({
         data: {

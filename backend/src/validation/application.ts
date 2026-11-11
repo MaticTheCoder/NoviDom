@@ -20,6 +20,10 @@ export const submitApplicationSchema = z.object({
     .trim()
     .min(MOTIVATION_MIN_LENGTH, `Na kratko opišite, zakaj želite posvojiti to žival (vsaj ${MOTIVATION_MIN_LENGTH} znakov).`)
     .max(2000, "Besedilo je lahko dolgo največ 2000 znakov."),
+  // Ob oceni Neujemanje mora posvojitelj potrditi, da je seznanjen z opozorili (US-03 AC 5).
+  acknowledgeWarnings: z.boolean().default(false),
 });
+
+export const ACKNOWLEDGE_WARNINGS_LABEL = "Seznanjen sem z opozorili";
 
 export type SubmitApplicationInput = z.input<typeof submitApplicationSchema>;

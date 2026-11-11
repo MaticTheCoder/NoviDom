@@ -65,4 +65,4 @@ export const PHOTO_LIMITS = {
   types: ["image/jpeg", "image/png", "image/webp"],
 } as const;
 
-export { MAX_ACTIVE_APPLICATIONS, MOTIVATION_MIN_LENGTH } from "./application";
+export { ACKNOWLEDGE_WARNINGS_LABEL, MAX_ACTIVE_APPLICATIONS, MOTIVATION_MIN_LENGTH } from "./application";
