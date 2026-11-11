@@ -1,18 +1,10 @@
-import type { ApplicationStatus, Prisma } from "../../generated/prisma/client";
+import type { Prisma } from "../../generated/prisma/client";
+import { ACTIVE_STATUSES } from "../../state-machine";
 
 /**
  * Aktivna stanja vloge (docs/02-funkcionalnosti-in-obseg.md). Enak seznam uporablja
  * delni unikatni indeks application_one_active_per_adopter_animal v migraciji.
  */
-export const ACTIVE_APPLICATION_STATUSES = [
-  "SUBMITTED",
-  "IN_REVIEW",
-  "VISIT_SCHEDULED",
-  "VISIT_DONE",
-  "APPROVED",
-] as const satisfies readonly ApplicationStatus[];
+export const ACTIVE_APPLICATION_STATUSES = ACTIVE_STATUSES;
 
-export const isActiveApplicationStatus = (status: ApplicationStatus) =>
-  (ACTIVE_APPLICATION_STATUSES as readonly ApplicationStatus[]).includes(status);
-
-export const activeApplicationWhere = { status: { in: [...ACTIVE_APPLICATION_STATUSES] } } satisfies Prisma.ApplicationWhereInput;
+export const activeApplicationWhere = { status: { in: [...ACTIVE_STATUSES] } } satisfies Prisma.ApplicationWhereInput;

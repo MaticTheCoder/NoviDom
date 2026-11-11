@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { auth } from "@/auth";
 
 export const metadata: Metadata = { title: "Moje vloge – Novi dom" };
@@ -11,6 +12,11 @@ export default async function Page() {
       <h1 className="text-2xl font-semibold tracking-tight">Moje vloge</h1>
       <p className="mt-2 text-muted-foreground">
         Pozdravljeni, {session?.user?.name}. Pregled oddanih vlog za posvojitev.
+      </p>
+      <p className="mt-4 text-sm">
+        <Link href="/moje-vloge/vprasalnik" className="underline-offset-4 hover:underline">
+          Vprašalnik o gospodinjstvu
+        </Link>
       </p>
     </main>
   );

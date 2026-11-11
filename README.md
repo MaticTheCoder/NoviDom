@@ -25,7 +25,7 @@ Delovanje povezave z bazo preveriš na `http://localhost:3000/api/health`.
 | `pnpm build` | produkcijski build |
 | `pnpm lint` | ESLint |
 | `pnpm typecheck` | preverjanje tipov v obeh paketih |
-| `pnpm test` | enotski testi (Vitest) |
+| `pnpm test` | enotski in integracijski testi (Vitest); integracijski tečejo na ločeni bazi `novidom_test`, ki se ustvari samodejno (potreben je `docker compose up -d`) |
 | `pnpm db:studio` | Prisma Studio za pregled baze |
 
 ### Testni uporabniki
