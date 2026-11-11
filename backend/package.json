@@ -11,7 +11,8 @@
     "./validation": "./src/validation/animal.ts",
     "./enums": "./src/generated/prisma/enums.ts",
     "./state-machine": "./src/state-machine/index.ts",
-    "./validation/user": "./src/validation/user.ts"
+    "./validation/user": "./src/validation/user.ts",
+    "./validation/household": "./src/validation/household.ts"
   },
   "scripts": {
     "postinstall": "prisma generate",
