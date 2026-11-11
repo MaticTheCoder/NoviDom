@@ -125,7 +125,7 @@ async function main() {
   await prisma.household.deleteMany({ where: { userId: marko.id } });
 
   // Revizijska sled je samo za vstavljanje (sprožilec zavrne DELETE), TRUNCATE pa je dovoljen.
-  await prisma.$executeRaw`TRUNCATE "ApplicationEvent", "Visit", "VisitSlot", "Application" CASCADE`;
+  await prisma.$executeRaw`TRUNCATE "ApplicationEvent", "VisitReport", "Visit", "VisitSlot", "Application" CASCADE`;
   await prisma.animal.deleteMany(); // fotografije se izbrišejo kaskadno
   for (const animal of ANIMALS) {
     await prisma.animal.create({
