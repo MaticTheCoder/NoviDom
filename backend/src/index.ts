@@ -5,6 +5,7 @@ export type { Actor } from "./services/guard";
 export * from "./services/animals";
 export * from "./services/applications";
 export * from "./services/households";
+export * from "./services/matching";
 export * from "./services/users";
 export * from "./state-machine";
 export * from "./storage/photos";

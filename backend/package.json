@@ -12,7 +12,8 @@
     "./enums": "./src/generated/prisma/enums.ts",
     "./state-machine": "./src/state-machine/index.ts",
     "./validation/user": "./src/validation/user.ts",
-    "./validation/household": "./src/validation/household.ts"
+    "./validation/household": "./src/validation/household.ts",
+    "./matching": "./src/services/matching/index.ts"
   },
   "scripts": {
     "postinstall": "prisma generate",
