@@ -13,7 +13,8 @@
     "./state-machine": "./src/state-machine/index.ts",
     "./validation/user": "./src/validation/user.ts",
     "./validation/household": "./src/validation/household.ts",
-    "./matching": "./src/services/matching/index.ts"
+    "./matching": "./src/services/matching/index.ts",
+    "./validation/visit": "./src/validation/visit.ts"
   },
   "scripts": {
     "postinstall": "prisma generate",
