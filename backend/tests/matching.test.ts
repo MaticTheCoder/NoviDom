@@ -165,7 +165,7 @@ describe("assessMatch – besedila opozoril (AC 2, 4)", () => {
     ],
     [{ hasDogs: true }, { goodWithDogs: "NO" }, "Žival Rex se ne razume s psi.", "V gospodinjstvu: pes"],
     [{ hasCats: true }, { goodWithCats: "NO" }, "Žival Rex se ne razume z mačkami.", "V gospodinjstvu: mačka"],
-  ] as const)("%j + %j → »%s« / »%s«", (h, a, message, trigger) => {
+  ] satisfies [Partial<MatchHousehold>, Partial<MatchAnimal>, string, string][])("%j + %j → »%s« / »%s«", (h, a, message, trigger) => {
     expect(assessMatch({ ...household, ...h }, { ...animal, ...a }).warnings).toMatchObject([{ message, trigger }]);
   });
 
