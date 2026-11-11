@@ -1,6 +1,7 @@
 import { hashPassword } from "../src/auth/password";
 import { prisma } from "../src/db";
 import type { Prisma } from "../src/generated/prisma/client";
+import { addDays, shelterDate, shelterTimeToUtc, weekday } from "../src/time";
 
 // Testni podatki za lokalni razvoj. Skripta je idempotentna: uporabnike posodobi
 // po e-pošti, živali in vloge pa pobriše in ustvari na novo.
@@ -124,7 +125,7 @@ async function main() {
   await prisma.household.deleteMany({ where: { userId: marko.id } });
 
   // Revizijska sled je samo za vstavljanje (sprožilec zavrne DELETE), TRUNCATE pa je dovoljen.
-  await prisma.$executeRaw`TRUNCATE "ApplicationEvent", "Application" CASCADE`;
+  await prisma.$executeRaw`TRUNCATE "ApplicationEvent", "Visit", "VisitSlot", "Application" CASCADE`;
   await prisma.animal.deleteMany(); // fotografije se izbrišejo kaskadno
   for (const animal of ANIMALS) {
     await prisma.animal.create({
@@ -138,7 +139,22 @@ async function main() {
     });
   }
 
-  console.log(`Seed: ${users.length} uporabnikov (geslo: ${SEED_PASSWORD}), ${ANIMALS.length} živali.`);
+  // Termini ogledov za naslednjih 14 dni (docs/04): od ponedeljka do sobote ob 10:00, 11:00
+  // in 16:00 po 30 minut, izmenično za oba prostovoljca; nedelja je zaprta.
+  const volunteers = users.filter((u) => u.role === "VOLUNTEER");
+  const today = shelterDate(new Date());
+  const slots: Prisma.VisitSlotCreateManyInput[] = [];
+  for (let day = 1; day <= 14; day++) {
+    const date = addDays(today, day);
+    if (weekday(date) === 0) continue;
+    ["10:00", "11:00", "16:00"].forEach((time, i) => {
+      const startsAt = shelterTimeToUtc(date, time);
+      slots.push({ startsAt, endsAt: new Date(startsAt.getTime() + 30 * 60000), volunteerId: volunteers[(day + i) % volunteers.length].id });
+    });
+  }
+  await prisma.visitSlot.createMany({ data: slots });
+
+  console.log(`Seed: ${users.length} uporabnikov (geslo: ${SEED_PASSWORD}), ${ANIMALS.length} živali, ${slots.length} terminov ogleda.`);
 }
 
 main()

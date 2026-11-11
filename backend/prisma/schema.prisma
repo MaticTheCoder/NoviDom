@@ -34,6 +34,7 @@ model User {
   household      Household?
   applications   Application[]
   events         ApplicationEvent[]
+  visitSlots     VisitSlot[]
 }
 
 // ---------------------------------------------------------------------------
@@ -104,6 +105,7 @@ model Application {
   closedAt          DateTime? // čas prehoda v končno stanje
 
   events ApplicationEvent[]
+  visits Visit[]
 
   @@index([adopterId, status])
   @@index([animalId, status])
@@ -219,4 +221,49 @@ model ApplicationEvent {
   createdAt     DateTime           @default(now())
 
   @@index([applicationId, createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Termini in ogledi (US-05)
+// ---------------------------------------------------------------------------
+
+// Termin ogleda, ki ga izvede dodeljeni prostovoljec. Časi so v UTC, prikazani
+// v času Europe/Ljubljana.
+model VisitSlot {
+  id          String   @id @default(uuid()) @db.Uuid
+  startsAt    DateTime
+  endsAt      DateTime
+  volunteerId String   @db.Uuid
+  volunteer   User     @relation(fields: [volunteerId], references: [id])
+  isCancelled Boolean  @default(false) // npr. zaprto zavetišče
+  createdAt   DateTime @default(now())
+
+  visits Visit[]
+
+  @@index([startsAt])
+  @@index([volunteerId, startsAt])
+}
+
+enum VisitOutcome {
+  PENDING // dogovorjen, še ni izveden
+  DONE // opravljen (zapisnik oddan)
+  NO_SHOW // kandidat ni prišel
+  CANCELLED // odpovedan
+}
+
+// Rezervacija termina za vlogo. Delna unikatna indeksa (ročna SQL migracija):
+// - visit_one_active_per_slot: termin je zaseden z največ enim neodpovedanim ogledom
+// - visit_one_pending_per_application: vloga ima največ en dogovorjen ogled
+model Visit {
+  id            String       @id @default(uuid()) @db.Uuid
+  applicationId String       @db.Uuid
+  application   Application  @relation(fields: [applicationId], references: [id])
+  slotId        String       @db.Uuid
+  slot          VisitSlot    @relation(fields: [slotId], references: [id])
+  outcome       VisitOutcome @default(PENDING)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([applicationId])
+  @@index([slotId])
 }
