@@ -84,7 +84,7 @@ export default async function SubmitApplicationPage({ params }: { params: Promis
               </p>
             </section>
 
-            <SubmitForm animalId={animal.id} />
+            <SubmitForm animalId={animal.id} requireAcknowledgement={preview.match.level === "MISMATCH"} />
           </div>
         )}
       </div>

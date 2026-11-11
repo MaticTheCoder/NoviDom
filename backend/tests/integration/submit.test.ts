@@ -48,9 +48,39 @@ describe("submitApplication", () => {
 
   it("izračuna in shrani oceno ujemanja z opozorili (US-03)", async () => {
     const animal = await createAnimal(manager.id, { name: "Rex", goodWithKids: "OVER_6", needsGarden: true });
-    const app = await submit(animal.id);
+    const app = await submitApplication({ userId: adopter.id }, { animalId: animal.id, motivation: MOTIVATION, acknowledgeWarnings: true });
     expect(app.matchLevel).toBe("MISMATCH");
     expect(parseMatchWarnings(app.matchWarnings).map((w) => w.trigger)).toEqual(["V gospodinjstvu: otrok, star 4 leta", "Bivanje: brez vrta"]);
+  });
+
+  describe("potrditev ob Neujemanju (US-03 AC 5)", () => {
+    it("brez potrditve vloga ni oddana; napaka pri polju", async () => {
+      const animal = await createAnimal(manager.id, { goodWithKids: "NO" });
+      await expect(submit(animal.id)).rejects.toMatchObject({
+        code: "APPLICATION_WARNINGS_NOT_ACKNOWLEDGED",
+        details: { fieldErrors: { acknowledgeWarnings: expect.any(String) } },
+      });
+      expect(await prisma.application.count()).toBe(0);
+    });
+
+    it("s potrditvijo je vloga oddana kljub opozorilom", async () => {
+      const animal = await createAnimal(manager.id, { goodWithKids: "NO" });
+      const app = await submitApplication({ userId: adopter.id }, { animalId: animal.id, motivation: MOTIVATION, acknowledgeWarnings: true });
+      expect(app).toMatchObject({ status: "SUBMITTED", matchLevel: "MISMATCH" });
+    });
+
+    it("pri oceni Pogojno potrditev ni potrebna", async () => {
+      const animal = await createAnimal(manager.id, { needsGarden: true });
+      expect(await submit(animal.id)).toMatchObject({ status: "SUBMITTED", matchLevel: "CONDITIONAL" });
+    });
+
+    it("strežnik oceno izračuna znova: sprememba vprašalnika po odprtju strani zahteva potrditev", async () => {
+      const animal = await createAnimal(manager.id, { goodWithKids: "OVER_6" });
+      await saveMyHousehold({ userId: adopter.id }, { ...HOUSEHOLD, childrenAges: [] });
+      // Posvojitelj je stran odprl z oceno Ujemanje, nato v drugem zavihku dodal otroka.
+      await saveMyHousehold({ userId: adopter.id }, { ...HOUSEHOLD, childrenAges: [2] });
+      expect(await codeOf(() => submit(animal.id))).toBe("APPLICATION_WARNINGS_NOT_ACKNOWLEDGED");
+    });
   });
 
   it("brez opozoril je ocena Ujemanje", async () => {

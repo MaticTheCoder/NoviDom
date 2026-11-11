@@ -8,11 +8,15 @@ import { requireActor } from "@/lib/session";
 
 export type SubmitResult = { ok: false; error: string; code?: string; applicationId?: string; fieldErrors?: Record<string, string> };
 
-export async function submitApplicationAction(animalId: string, motivation: string): Promise<SubmitResult> {
+export async function submitApplicationAction(
+  animalId: string,
+  motivation: string,
+  acknowledgeWarnings: boolean,
+): Promise<SubmitResult> {
   const actor = await requireActor();
   let id: string;
   try {
-    id = (await submitApplication(actor, { animalId, motivation })).id;
+    id = (await submitApplication(actor, { animalId, motivation, acknowledgeWarnings })).id;
   } catch (error) {
     const result = toActionError(error);
     if (result.ok) throw error;
