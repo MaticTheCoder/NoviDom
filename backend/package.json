@@ -14,7 +14,8 @@
     "./validation/user": "./src/validation/user.ts",
     "./validation/household": "./src/validation/household.ts",
     "./matching": "./src/services/matching/index.ts",
-    "./validation/visit": "./src/validation/visit.ts"
+    "./validation/visit": "./src/validation/visit.ts",
+    "./time": "./src/time.ts"
   },
   "scripts": {
     "postinstall": "prisma generate",
