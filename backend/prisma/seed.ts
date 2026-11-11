@@ -3,7 +3,7 @@ import { prisma } from "../src/db";
 import type { Prisma } from "../src/generated/prisma/client";
 
 // Testni podatki za lokalni razvoj. Skripta je idempotentna: uporabnike posodobi
-// po e-pošti, živali pa pobriše in ustvari na novo.
+// po e-pošti, živali in vloge pa pobriše in ustvari na novo.
 // Vsi testni uporabniki imajo geslo SEED_PASSWORD.
 const SEED_PASSWORD = "NoviDom123!";
 
@@ -112,6 +112,7 @@ async function main() {
   );
   const manager = users.find((u) => u.role === "MANAGER")!;
 
+  await prisma.application.deleteMany();
   await prisma.animal.deleteMany(); // fotografije se izbrišejo kaskadno
   for (const animal of ANIMALS) {
     await prisma.animal.create({

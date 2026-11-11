@@ -15,9 +15,9 @@ datasource db {
 // ---------------------------------------------------------------------------
 
 enum Role {
-  ADOPTER   // posvojitelj
+  ADOPTER // posvojitelj
   VOLUNTEER // prostovoljec
-  MANAGER   // vodja zavetišča
+  MANAGER // vodja zavetišča
 }
 
 model User {
@@ -30,7 +30,80 @@ model User {
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
 
-  animalsCreated Animal[] @relation("AnimalCreatedBy")
+  animalsCreated Animal[]      @relation("AnimalCreatedBy")
+  household      Household?
+  applications   Application[]
+}
+
+// ---------------------------------------------------------------------------
+// Vprašalnik o gospodinjstvu (1 : 0..1 z uporabnikom z vlogo ADOPTER)
+// ---------------------------------------------------------------------------
+
+enum HousingType {
+  APARTMENT // stanovanje
+  HOUSE // hiša
+}
+
+model Household {
+  id               String      @id @default(uuid()) @db.Uuid
+  userId           String      @unique @db.Uuid
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  housingType      HousingType
+  hasGarden        Boolean
+  // Starosti otrok v letih. Namesto števil otrok pod/nad 6 let, ker opozorilo
+  // ujemanja navede starost otroka (»otrok, star 4 leta«, US-03 AC 4).
+  childrenAges     Int[]       @default([])
+  hasDogs          Boolean     @default(false)
+  hasCats          Boolean     @default(false)
+  hoursAlonePerDay Int
+  experience       String      @default("")
+  updatedAt        DateTime    @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Vloga za posvojitev
+// ---------------------------------------------------------------------------
+
+// Stanja vloge (docs/02-funkcionalnosti-in-obseg.md, ADR-0006).
+// Aktivna stanja: SUBMITTED, IN_REVIEW, VISIT_SCHEDULED, VISIT_DONE, APPROVED.
+enum ApplicationStatus {
+  SUBMITTED // oddana
+  IN_REVIEW // v pregledu
+  VISIT_SCHEDULED // ogled dogovorjen
+  VISIT_DONE // ogled opravljen
+  APPROVED // odobrena
+  REJECTED // zavrnjena
+  WITHDRAWN // umaknjena
+  ADOPTED // posvojena
+}
+
+enum MatchLevel {
+  MATCH // ujemanje
+  CONDITIONAL // pogojno
+  MISMATCH // neujemanje
+}
+
+// Delna unikatna indeksa (ročna SQL migracija, ker ju Prisma shema ne izrazi):
+// - application_one_active_per_adopter_animal: ena aktivna vloga posvojitelja na žival
+// - application_one_approved_per_animal: največ ena odobrena vloga na žival
+model Application {
+  id                String            @id @default(uuid()) @db.Uuid
+  adopterId         String            @db.Uuid
+  adopter           User              @relation(fields: [adopterId], references: [id])
+  animalId          String            @db.Uuid
+  animal            Animal            @relation(fields: [animalId], references: [id])
+  status            ApplicationStatus @default(SUBMITTED)
+  motivation        String
+  // Kopija vprašalnika ob oddaji (ADR-0008); kasnejše spremembe profila ne spremenijo vloge.
+  householdSnapshot Json
+  matchLevel        MatchLevel
+  matchWarnings     Json              @default("[]") // seznam opozoril ocene ujemanja
+  decisionComment   String?
+  submittedAt       DateTime          @default(now())
+  closedAt          DateTime? // čas prehoda v končno stanje
+
+  @@index([adopterId, status])
+  @@index([animalId, status])
 }
 
 // ---------------------------------------------------------------------------
@@ -83,13 +156,13 @@ enum AnimalStatus {
 }
 
 model Animal {
-  id              String       @id @default(uuid()) @db.Uuid
+  id              String   @id @default(uuid()) @db.Uuid
   name            String
   species         Species
   sex             Sex
-  birthDateApprox DateTime     @db.Date
-  description     String       @default("")
-  internalNotes   String       @default("") // vedenjske opombe, vidne samo osebju
+  birthDateApprox DateTime @db.Date
+  description     String   @default("")
+  internalNotes   String   @default("") // vedenjske opombe, vidne samo osebju
 
   // Vedenjske lastnosti. Ob sprejemu so lahko še neznane (null = ni vneseno);
   // žival je mogoče označiti kot na voljo šele, ko nobena ni null (US-01 AC 2).
@@ -113,7 +186,8 @@ model Animal {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
-  photos AnimalPhoto[]
+  photos       AnimalPhoto[]
+  applications Application[]
 
   @@index([status, species])
 }

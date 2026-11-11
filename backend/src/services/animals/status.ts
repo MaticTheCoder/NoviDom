@@ -1,6 +1,7 @@
 import { prisma } from "../../db";
 import { CommonErrorCode, DomainError } from "../../errors";
 import type { Animal, AnimalStatus, Prisma } from "../../generated/prisma/client";
+import { activeApplicationWhere } from "../applications/active";
 import { type Actor, requireManager } from "../guard";
 
 // ---------------------------------------------------------------------------
@@ -101,13 +102,9 @@ export function assertStatusChangeAllowed(
 
 type Tx = Prisma.TransactionClient;
 
-/**
- * Število aktivnih vlog za žival. Model Application še ne obstaja (doda ga #10),
- * zato žival trenutno ne more imeti aktivnih vlog. Ko bo model dodan, se tu
- * prešteje vloge v stanjih SUBMITTED, IN_REVIEW, VISIT_SCHEDULED, VISIT_DONE in APPROVED.
- */
-async function countActiveApplications(_tx: Tx, _animalId: string): Promise<number> {
-  return 0;
+/** Število aktivnih vlog za žival (US-01 AC 5). */
+function countActiveApplications(tx: Tx, animalId: string): Promise<number> {
+  return tx.application.count({ where: { animalId, ...activeApplicationWhere } });
 }
 
 /**

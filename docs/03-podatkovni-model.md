@@ -27,8 +27,7 @@ Razmerje 1 : 1 z uporabnikom z vlogo `ADOPTER`.
 | userId | UUID, FK → User, unikaten | |
 | housingType | enum `APARTMENT`, `HOUSE` | tip bivanja |
 | hasGarden | boolean | |
-| childrenUnder6 | int | število otrok, mlajših od 6 let |
-| childrenOver6 | int | |
+| childrenAges | int[] | starosti otrok v letih (iz njih se izpelje, ali so v gospodinjstvu otroci, mlajši od 6 let; opozorilo ujemanja navede starost, US-03 AC 4) |
 | hasDogs, hasCats | boolean | druge živali v gospodinjstvu |
 | hoursAlonePerDay | int | koliko ur je žival dnevno sama |
 | experience | text | izkušnje z živalmi |
@@ -161,7 +160,7 @@ erDiagram
         uuid userId FK
         enum housingType
         boolean hasGarden
-        int childrenUnder6
+        int[] childrenAges
         boolean hasDogs
         boolean hasCats
         int hoursAlonePerDay
