@@ -23,9 +23,14 @@ export async function listApplicationsForManager(actor: Actor, filter: { status?
       adopter: { select: { name: true } },
       animal: { select: { id: true, name: true, species: true } },
       events: { orderBy: { createdAt: "desc" }, take: 1, select: { createdAt: true } },
+      visits: { where: { report: { isNot: null } }, take: 1, select: { report: { select: { recommendation: true } } } },
     },
   });
-  return applications.map(({ events, ...a }) => ({ ...a, lastChangeAt: events[0]?.createdAt ?? a.submittedAt }));
+  return applications.map(({ events, visits, ...a }) => ({
+    ...a,
+    lastChangeAt: events[0]?.createdAt ?? a.submittedAt,
+    recommendation: visits[0]?.report?.recommendation ?? null,
+  }));
 }
 
 export async function getApplicationForManager(actor: Actor, applicationId: string) {
@@ -55,8 +60,21 @@ export async function getApplicationForManager(actor: Actor, applicationId: stri
     select: { id: true, adopter: { select: { name: true } } },
   });
 
+  // Ogledi z zapisniki prostovoljcev (US-06 AC 5: vidni vodji, posvojitelju nikoli).
+  const visits = await prisma.visit.findMany({
+    where: { applicationId: application.id },
+    orderBy: { slot: { startsAt: "desc" } },
+    select: {
+      id: true,
+      outcome: true,
+      slot: { select: { startsAt: true, volunteer: { select: { name: true } } } },
+      report: { select: { recommendation: true, text: true, submittedAt: true, updatedAt: true, author: { select: { name: true } } } },
+    },
+  });
+
   return {
     ...application,
+    visits,
     animal: { ...application.animal, coverPhoto: application.animal.photos[0]?.url ?? null },
     household: parseHouseholdSnapshot(application.householdSnapshot),
     matchWarnings: parseMatchWarnings(application.matchWarnings),

@@ -4,7 +4,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ApplicationStatusBadge } from "@/components/application-status-badge";
 import { MatchResult } from "@/components/match-result";
-import { APPLICATION_STATUS_LABEL, formatDateTime, HOUSING_LABEL, SPECIES_LABEL, STATUS_LABEL } from "@/lib/labels";
+import {
+  APPLICATION_STATUS_LABEL,
+  formatDateTime,
+  HOUSING_LABEL,
+  RECOMMENDATION_LABEL,
+  SPECIES_LABEL,
+  STATUS_LABEL,
+  VISIT_OUTCOME_LABEL,
+} from "@/lib/labels";
 import { requireActor } from "@/lib/session";
 import { TransitionPanel } from "./transition-panel";
 
@@ -47,6 +55,42 @@ export default async function ManagerApplicationPage({ params }: { params: Promi
           </section>
 
           <MatchResult audience="staff" level={app.matchLevel} warnings={app.matchWarnings} title="Ocena ujemanja ob oddaji" />
+
+          <section className="flex flex-col gap-3">
+            <h2 className="text-lg font-medium">Ogledi in zapisnik prostovoljca</h2>
+            {app.visits.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Ogled še ni bil dogovorjen.</p>
+            ) : (
+              <ul className="flex flex-col gap-3">
+                {app.visits.map((v) => (
+                  <li key={v.id} className="flex flex-col gap-2 rounded-xl border p-4 text-sm">
+                    <p>
+                      <span className="font-medium">{formatDateTime(v.slot.startsAt)}</span>
+                      <span className="text-muted-foreground">
+                        {" "}
+                        · {v.slot.volunteer.name} · {VISIT_OUTCOME_LABEL[v.outcome]}
+                      </span>
+                    </p>
+                    {v.report ? (
+                      <>
+                        <p>
+                          Priporočilo: <span className="font-medium">{RECOMMENDATION_LABEL[v.report.recommendation]}</span>
+                        </p>
+                        <p className="whitespace-pre-line">{v.report.text}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {v.report.author.name}, oddano {formatDateTime(v.report.submittedAt)}
+                          {v.report.updatedAt.getTime() - v.report.submittedAt.getTime() > 1000 &&
+                            `, urejeno ${formatDateTime(v.report.updatedAt)}`}
+                        </p>
+                      </>
+                    ) : (
+                      <p className="text-muted-foreground">Zapisnik še ni oddan.</p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
 
           <section className="flex flex-col gap-3">
             <h2 className="text-lg font-medium">Kandidat</h2>
