@@ -50,12 +50,13 @@ export function MatchResult({
 }) {
   const { className: color, Icon } = STYLE[level];
   return (
-    <section aria-labelledby="match-title" className={cn("flex flex-col gap-3 rounded-xl border p-4", color)}>
-      <div className="flex flex-wrap items-center gap-2">
-        <Icon className="size-5" aria-hidden />
-        <h2 id="match-title" className="text-base font-semibold">
-          {title}: {MATCH_LABEL[level]}
+    <section aria-labelledby="match-title" className={cn("flex flex-col gap-3 rounded-xl border p-4 sm:p-5", color)}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 id="match-title" className="flex items-center gap-2 text-base font-semibold">
+          <Icon className="size-5" aria-hidden />
+          {title}
         </h2>
+        <MatchBadge level={level} className="bg-background/80 px-3 py-1 text-sm" />
       </div>
       <p className="text-sm">{SUMMARY[audience][level]}</p>
       {warnings.length > 0 && (
