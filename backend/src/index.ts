@@ -8,6 +8,7 @@ export * from "./services/households";
 export * from "./services/matching";
 export * from "./services/users";
 export * from "./services/visits";
+export * from "./shelter";
 export * from "./state-machine";
 export * from "./time";
 export * from "./storage/photos";
