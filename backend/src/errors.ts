@@ -19,3 +19,8 @@ export const CommonErrorCode = {
   Forbidden: "FORBIDDEN",
   NotFound: "NOT_FOUND",
 } as const;
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** ID iz URL-ja; neveljaven UUID obravnavamo kot neobstoječ zapis (404 namesto napake baze). */
+export const isUuid = (value: string) => UUID.test(value);

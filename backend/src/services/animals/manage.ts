@@ -1,5 +1,5 @@
 import { prisma } from "../../db";
-import { CommonErrorCode, DomainError } from "../../errors";
+import { CommonErrorCode, DomainError, isUuid } from "../../errors";
 import type { Prisma } from "../../generated/prisma/client";
 import { deleteStoredPhoto, savePhoto } from "../../storage/photos";
 import { type AnimalInput, animalInputSchema, PHOTO_LIMITS } from "../../validation/animal";
@@ -45,6 +45,7 @@ export async function listAnimalsForManager(actor: Actor) {
 
 export async function getAnimalForManager(actor: Actor, animalId: string) {
   await requireManager(prisma, actor);
+  if (!isUuid(animalId)) throw notFound();
   const animal = await prisma.animal.findUnique({ where: { id: animalId }, include: withPhotos });
   if (!animal) throw notFound();
   return { ...animal, missing: getMissingBehaviorAttributes(animal) };

@@ -1,6 +1,6 @@
 // Javni vmesnik domenskega paketa (ADR-0002).
 export { checkDatabase } from "./health";
-export { CommonErrorCode, DomainError, isDomainError } from "./errors";
+export { CommonErrorCode, DomainError, isDomainError, isUuid } from "./errors";
 export type { Actor } from "./services/guard";
 export * from "./services/animals";
 export * from "./services/applications";
