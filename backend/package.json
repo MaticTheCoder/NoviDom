@@ -10,7 +10,8 @@
     "./access": "./src/auth/access.ts",
     "./validation": "./src/validation/animal.ts",
     "./enums": "./src/generated/prisma/enums.ts",
-    "./state-machine": "./src/state-machine/index.ts"
+    "./state-machine": "./src/state-machine/index.ts",
+    "./validation/user": "./src/validation/user.ts"
   },
   "scripts": {
     "postinstall": "prisma generate",
