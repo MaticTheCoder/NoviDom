@@ -7,6 +7,7 @@ export * from "./services/applications";
 export * from "./services/households";
 export * from "./services/matching";
 export * from "./services/users";
+export * from "./services/visits";
 export * from "./state-machine";
 export * from "./time";
 export * from "./storage/photos";
