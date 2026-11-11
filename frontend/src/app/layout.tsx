@@ -1,35 +1,35 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Public_Sans } from "next/font/google";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
+// Naslovi: Bricolage Grotesque; besedilo, obrazci in tabele: Public Sans.
 // latin-ext vsebuje šumnike (č, š, ž).
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin", "latin-ext"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin", "latin-ext"],
-});
+const display = Bricolage_Grotesque({ variable: "--font-display", subsets: ["latin", "latin-ext"], display: "swap" });
+const body = Public_Sans({ variable: "--font-body", subsets: ["latin", "latin-ext"], display: "swap" });
 
 export const metadata: Metadata = {
   title: "Novi dom",
   description: "Posvojitev psov in mačk iz zavetišča",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     // Spremenljivke pisav morajo biti na <html>, ker globals.css nanj nastavi font-sans.
-    <html lang="sl" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="sl" className={`${display.variable} ${body.variable}`}>
       <body className="flex min-h-screen flex-col antialiased">
+        <a
+          href="#vsebina"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:text-primary-foreground"
+        >
+          Preskoči na vsebino
+        </a>
         <SiteHeader />
-        {children}
+        <div id="vsebina" className="flex flex-1 flex-col">
+          {children}
+        </div>
+        <SiteFooter />
       </body>
     </html>
   );

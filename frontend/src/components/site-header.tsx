@@ -1,6 +1,8 @@
-import { HOME_BY_ROLE, type Role } from "@novi-dom/backend/access";
+import type { Role } from "@novi-dom/backend/access";
 import Link from "next/link";
 import { auth, signOut } from "@/auth";
+import { Logo } from "@/components/logo";
+import { NavLink } from "@/components/nav-link";
 import { Button, buttonVariants } from "@/components/ui/button";
 
 const ROLE_LABEL: Record<Role, string> = {
@@ -9,37 +11,71 @@ const ROLE_LABEL: Record<Role, string> = {
   ADOPTER: "posvojitelj",
 };
 
+/** Povezave glede na vlogo; »Živali« (katalog) je vidna vsem. */
+const NAV: Record<Role | "GUEST", { href: string; label: string; exact?: boolean }[]> = {
+  GUEST: [{ href: "/", label: "Živali", exact: true }],
+  ADOPTER: [
+    { href: "/", label: "Živali", exact: true },
+    { href: "/moje-vloge", label: "Moje vloge" },
+  ],
+  VOLUNTEER: [
+    { href: "/", label: "Živali", exact: true },
+    { href: "/ogledi", label: "Moji ogledi" },
+  ],
+  MANAGER: [
+    { href: "/upravljanje/vloge", label: "Vloge" },
+    { href: "/upravljanje/zivali", label: "Kartoteka" },
+    { href: "/", label: "Katalog", exact: true },
+  ],
+};
+
 export async function SiteHeader() {
   const session = await auth();
   const user = session?.user;
+  const nav = NAV[user?.role ?? "GUEST"];
 
   return (
-    <header className="border-b">
-      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-4 px-4">
-        <Link href="/" className="font-semibold">
-          Novi dom
+    <header className="border-b bg-background/95">
+      <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2.5">
+        <Link href={user?.role === "MANAGER" ? "/upravljanje" : "/"} className="rounded-md" aria-label="Novi dom, domov">
+          <Logo />
         </Link>
-        {user ? (
-          <div className="flex items-center gap-3 text-sm">
-            <Link href={HOME_BY_ROLE[user.role]} className="hover:underline">
-              {user.name} <span className="text-muted-foreground">({ROLE_LABEL[user.role]})</span>
-            </Link>
-            <form
-              action={async () => {
-                "use server";
-                await signOut({ redirectTo: "/" });
-              }}
-            >
-              <Button type="submit" variant="outline" size="sm">
-                Odjava
-              </Button>
-            </form>
-          </div>
-        ) : (
-          <Link href="/prijava" className={buttonVariants({ variant: "outline", size: "sm" })}>
-            Prijava
-          </Link>
-        )}
+        <nav aria-label="Glavna navigacija" className="order-3 -mx-2 flex w-full gap-1 overflow-x-auto sm:order-none sm:mx-0 sm:w-auto">
+          {nav.map((item) => (
+            <NavLink key={item.href} href={item.href} exact={item.exact}>
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+        <div className="ml-auto flex items-center gap-3 text-sm">
+          {user ? (
+            <>
+              <span className="hidden text-right leading-tight md:block">
+                {user.name}
+                <span className="block text-xs text-muted-foreground">{ROLE_LABEL[user.role]}</span>
+              </span>
+              <form
+                action={async () => {
+                  "use server";
+                  await signOut({ redirectTo: "/" });
+                }}
+              >
+                <Button type="submit" variant="outline" size="sm">
+                  Odjava
+                </Button>
+              </form>
+            </>
+          ) : (
+            <>
+              <Link href="/prijava" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+                Prijava
+              </Link>
+              <Link href="/registracija" className={buttonVariants({ size: "sm" })}>
+                Ustvari račun
+              </Link>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );
