@@ -8,6 +8,8 @@ import type {
   HousingType,
   KidsCompatibility,
   MatchLevel,
+  Recommendation,
+  VisitOutcome,
   Sex,
   Species,
 } from "@novi-dom/backend/enums";
@@ -68,3 +70,15 @@ export const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 /** Dan termina, npr. »Četrtek, 12. november 2026«. */
 export const formatVisitDay = (d: Date) =>
   capitalize(new Intl.DateTimeFormat("sl-SI", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Ljubljana" }).format(d));
+
+export const RECOMMENDATION_LABEL: Record<Recommendation, string> = {
+  RECOMMEND: "Priporočam",
+  WITH_RESERVATIONS: "S pridržki",
+  NOT_RECOMMEND: "Ne priporočam",
+};
+export const VISIT_OUTCOME_LABEL: Record<VisitOutcome, string> = {
+  PENDING: "dogovorjen",
+  DONE: "opravljen",
+  NO_SHOW: "kandidat ni prišel",
+  CANCELLED: "odpovedan",
+};

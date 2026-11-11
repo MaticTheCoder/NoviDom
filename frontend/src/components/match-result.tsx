@@ -22,14 +22,32 @@ export function MatchBadge({ level, className }: { level: MatchLevel; className?
   );
 }
 
-const SUMMARY: Record<MatchLevel, string> = {
-  MATCH: "Vaše gospodinjstvo ustreza potrebam te živali.",
-  CONDITIONAL: "Ujemanje je pogojno. Preberite opozorila; vlogo lahko kljub temu oddate.",
-  MISMATCH: "Gospodinjstvo ne ustreza vsem potrebam živali. Vlogo lahko oddate, a preberite opozorila.",
+// Posvojitelju se besedilo obrača nanj, osebju pa opisuje kandidatovo gospodinjstvo.
+const SUMMARY: Record<"adopter" | "staff", Record<MatchLevel, string>> = {
+  adopter: {
+    MATCH: "Vaše gospodinjstvo ustreza potrebam te živali.",
+    CONDITIONAL: "Ujemanje je pogojno. Preberite opozorila; vlogo lahko kljub temu oddate.",
+    MISMATCH: "Gospodinjstvo ne ustreza vsem potrebam živali. Vlogo lahko oddate, a preberite opozorila.",
+  },
+  staff: {
+    MATCH: "Gospodinjstvo kandidata ustreza potrebam živali.",
+    CONDITIONAL: "Ujemanje je pogojno; preverite opozorila.",
+    MISMATCH: "Gospodinjstvo kandidata ne ustreza vsem potrebam živali; kandidat je opozorila potrdil ob oddaji.",
+  },
 };
 
 /** Oznaka ujemanja s povzetkom in seznamom opozoril (vzrok + podatek iz vprašalnika). */
-export function MatchResult({ level, warnings, title = "Ocena ujemanja" }: { level: MatchLevel; warnings: MatchWarning[]; title?: string }) {
+export function MatchResult({
+  level,
+  warnings,
+  title = "Ocena ujemanja",
+  audience = "adopter",
+}: {
+  level: MatchLevel;
+  warnings: MatchWarning[];
+  title?: string;
+  audience?: "adopter" | "staff";
+}) {
   const { className: color, Icon } = STYLE[level];
   return (
     <section aria-labelledby="match-title" className={cn("flex flex-col gap-3 rounded-xl border p-4", color)}>
@@ -39,7 +57,7 @@ export function MatchResult({ level, warnings, title = "Ocena ujemanja" }: { lev
           {title}: {MATCH_LABEL[level]}
         </h2>
       </div>
-      <p className="text-sm">{SUMMARY[level]}</p>
+      <p className="text-sm">{SUMMARY[audience][level]}</p>
       {warnings.length > 0 && (
         <ul className="flex flex-col gap-2">
           {warnings.map((w) => (

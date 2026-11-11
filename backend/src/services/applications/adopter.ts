@@ -77,7 +77,11 @@ export async function getMyApplication(actor: Actor, applicationId: string) {
     ...rest,
     matchWarnings: parseMatchWarnings(matchWarnings),
     animal: { ...animal, coverPhoto: animal.photos[0]?.url ?? null },
-    events: await listApplicationEvents(prisma, application.id),
+    // Posvojitelj ne dobi imen ali ID-jev osebja, le vlogo izvajalca (vi / zavetišče / sistem).
+    events: (await listApplicationEvents(prisma, application.id)).map(({ actor, ...e }) => ({
+      ...e,
+      actor: actor && { role: actor.role },
+    })),
     actions: getActionTransitions(application.status, "ADOPTER").filter((t) => t.trigger === "action"),
     // »Rezerviraj ogled« je na voljo le v stanju »v pregledu« (US-05 AC 1).
     canBookVisit: getActionTransitions(application.status, "ADOPTER").some((t) => t.trigger === "visit-booking"),

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ApplicationStatusBadge } from "@/components/application-status-badge";
 import { MatchBadge } from "@/components/match-result";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { APPLICATION_STATUS_LABEL, formatDate } from "@/lib/labels";
+import { APPLICATION_STATUS_LABEL, formatDate, RECOMMENDATION_LABEL } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 import { requireActor } from "@/lib/session";
 
@@ -50,6 +50,7 @@ export default async function ManagerApplicationsPage({ searchParams }: { search
                 <TableHead>Stanje</TableHead>
                 <TableHead>Oddana</TableHead>
                 <TableHead>Zadnja sprememba</TableHead>
+                <TableHead>Priporočilo</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -69,6 +70,7 @@ export default async function ManagerApplicationsPage({ searchParams }: { search
                   </TableCell>
                   <TableCell>{formatDate(a.submittedAt)}</TableCell>
                   <TableCell>{formatDate(a.lastChangeAt)}</TableCell>
+                  <TableCell>{a.recommendation ? RECOMMENDATION_LABEL[a.recommendation] : "—"}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
