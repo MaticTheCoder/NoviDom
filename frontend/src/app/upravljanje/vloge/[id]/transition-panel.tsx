@@ -23,11 +23,14 @@ export function TransitionPanel({
   actions,
   otherApproved,
   hasAdoption = false,
+  children,
 }: {
   applicationId: string;
   actions: TransitionDefinition[];
   otherApproved: { id: string; adopter: { name: string } } | null;
   hasAdoption?: boolean;
+  /** Dodatni gumb v isti vrstici (npr. »Zaključi posvojitev« s svojim oknom). */
+  children?: React.ReactNode;
 }) {
   const [pending, startTransition] = useTransition();
   const [open, setOpen] = useState<TransitionDefinition | null>(null);
@@ -51,7 +54,7 @@ export function TransitionPanel({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap justify-end gap-2">
         {actions.map((t) => {
           const blocked = t.to === "APPROVED" && !!otherApproved;
           return (
@@ -59,6 +62,7 @@ export function TransitionPanel({
               key={`${t.from}-${t.to}`}
               type="button"
               variant={VARIANT[t.to] ?? "outline"}
+              size="lg"
               disabled={pending || blocked}
               onClick={() => {
                 setError(undefined);
@@ -70,10 +74,11 @@ export function TransitionPanel({
             </Button>
           );
         })}
+        {children}
       </div>
 
       {otherApproved && actions.some((t) => t.to === "APPROVED") && (
-        <p className="text-sm text-destructive">
+        <p className="text-right text-sm text-destructive">
           Za to žival je že odobrena vloga kandidata {otherApproved.adopter.name}.{" "}
           <Link href={`/upravljanje/vloge/${otherApproved.id}`} className="underline">
             Odpri odobreno vlogo
