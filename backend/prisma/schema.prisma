@@ -35,6 +35,7 @@ model User {
   applications   Application[]
   events         ApplicationEvent[]
   visitSlots     VisitSlot[]
+  visitReports   VisitReport[]
 }
 
 // ---------------------------------------------------------------------------
@@ -264,6 +265,32 @@ model Visit {
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
+  report VisitReport?
+
   @@index([applicationId])
   @@index([slotId])
+}
+
+// ---------------------------------------------------------------------------
+// Zapisnik ogleda (US-06)
+// ---------------------------------------------------------------------------
+
+enum Recommendation {
+  RECOMMEND // priporočam
+  WITH_RESERVATIONS // s pridržki
+  NOT_RECOMMEND // ne priporočam
+}
+
+// Zapisnik prostovoljca po ogledu (1 : 0..1 z ogledom). Viden je vodji, posvojitelju nikoli
+// (US-06 AC 5). Prostovoljec ga lahko ureja 24 ur po oddaji (submittedAt), nato je samo za branje.
+model VisitReport {
+  id             String         @id @default(uuid()) @db.Uuid
+  visitId        String         @unique @db.Uuid
+  visit          Visit          @relation(fields: [visitId], references: [id])
+  authorId       String         @db.Uuid
+  author         User           @relation(fields: [authorId], references: [id])
+  recommendation Recommendation
+  text           String
+  submittedAt    DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 }

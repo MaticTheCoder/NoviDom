@@ -99,9 +99,20 @@ Razmerje 1 : 1 z uporabnikom z vlogo `ADOPTER`.
 | applicationId | UUID, FK → Application | |
 | slotId | UUID, FK → VisitSlot | |
 | outcome | enum `PENDING`, `DONE`, `NO_SHOW`, `CANCELLED` | |
-| report | text, nullable | zapisnik prostovoljca |
-| recommendation | enum `RECOMMEND`, `WITH_RESERVATIONS`, `NOT_RECOMMEND`, nullable | |
-| reportedAt | datetime, nullable | |
+
+### VisitReport (Zapisnik ogleda)
+
+Razmerje 1 : 0..1 z ogledom. Ločena entiteta, ker ima svojega avtorja, čas oddaje in 24-urno okno za urejanje (US-06 AC 4). Posvojitelju ni nikoli prikazan (US-06 AC 5).
+
+| Polje | Tip | Opis |
+|---|---|---|
+| id | UUID, PK | |
+| visitId | UUID, FK → Visit, unikaten | |
+| authorId | UUID, FK → User | prostovoljec, ki je zapisnik oddal |
+| recommendation | enum `RECOMMEND`, `WITH_RESERVATIONS`, `NOT_RECOMMEND` | priporočam / s pridržki / ne priporočam |
+| text | text | besedilo zapisnika (vsaj 20 znakov) |
+| submittedAt | datetime | čas oddaje; od tod se šteje 24 ur za urejanje |
+| updatedAt | datetime | |
 
 ### ApplicationEvent (Sprememba stanja vloge)
 
@@ -129,6 +140,7 @@ Revizijska sled, samo vstavljanje (brez urejanja in brisanja).
 | User (prostovoljec) – VisitSlot | 1 : N | prostovoljec ima več terminov |
 | Application – Visit | 1 : N | vloga ima lahko več ogledov (npr. po neprihodu), aktiven je največ eden |
 | VisitSlot – Visit | 1 : 0..1 | termin je lahko zaseden z največ enim aktivnim ogledom |
+| Visit – VisitReport | 1 : 0..1 | zapisnik prostovoljca po ogledu |
 | Application – ApplicationEvent | 1 : N | zgodovina stanj |
 | User – ApplicationEvent | 1 : N | kdo je izvedel spremembo |
 
@@ -145,6 +157,7 @@ erDiagram
     ANIMAL ||--o{ ANIMAL_PHOTO : "ima"
     APPLICATION ||--o{ VISIT : "ima"
     VISIT_SLOT ||--o| VISIT : "zaseden z"
+    VISIT ||--o| VISIT_REPORT : "zapisnik"
     APPLICATION ||--o{ APPLICATION_EVENT : "zgodovina"
 
     USER {
@@ -204,8 +217,14 @@ erDiagram
         uuid applicationId FK
         uuid slotId FK
         enum outcome
-        text report
+    }
+    VISIT_REPORT {
+        uuid id PK
+        uuid visitId FK
+        uuid authorId FK
         enum recommendation
+        text text
+        datetime submittedAt
     }
     APPLICATION_EVENT {
         uuid id PK
