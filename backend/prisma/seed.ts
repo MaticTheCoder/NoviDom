@@ -116,10 +116,10 @@ async function main() {
   // da je mogoče preizkusiti tudi prvo oddajo vloge (US-02 AC 2).
   const ana = users.find((u) => u.email === "ana@example.com")!;
   const marko = users.find((u) => u.email === "marko@example.com")!;
-  const anaHousehold = {
+  const anaHousehold: Omit<Prisma.HouseholdUncheckedCreateInput, "userId"> = {
     housingType: "APARTMENT", hasGarden: false, childrenAges: [4], hasDogs: false, hasCats: true,
     hoursAlonePerDay: 8, experience: "Imela sem mačko 10 let.",
-  } as const;
+  };
   await prisma.household.upsert({ where: { userId: ana.id }, create: { ...anaHousehold, userId: ana.id }, update: anaHousehold });
   await prisma.household.deleteMany({ where: { userId: marko.id } });
 
