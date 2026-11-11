@@ -59,3 +59,12 @@ export function ageLabel(birthDate: Date, now = new Date()): string {
   const mod = y % 100;
   return mod === 1 ? `${y} leto` : mod === 2 ? `${y} leti` : mod === 3 || mod === 4 ? `${y} leta` : `${y} let`;
 }
+
+/** Ura v času zavetišča, npr. »10:00«. */
+export const formatTime = (d: Date) =>
+  new Intl.DateTimeFormat("sl-SI", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Ljubljana" }).format(d);
+/** Prva črka velika (ostalo nespremenjeno, npr. ime meseca ostane z malo). */
+export const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+/** Dan termina, npr. »Četrtek, 12. november 2026«. */
+export const formatVisitDay = (d: Date) =>
+  capitalize(new Intl.DateTimeFormat("sl-SI", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Ljubljana" }).format(d));

@@ -3,6 +3,7 @@ import { isUuid } from "../../errors";
 import { getActionTransitions } from "../../state-machine";
 import { type Actor, requireRole } from "../guard";
 import { parseMatchWarnings } from "../matching";
+import { getScheduledVisit } from "../visits/booking";
 import { activeApplicationWhere } from "./active";
 import { listApplicationEvents } from "./events";
 import { applicationNotFound } from "./transition";
@@ -78,5 +79,8 @@ export async function getMyApplication(actor: Actor, applicationId: string) {
     animal: { ...animal, coverPhoto: animal.photos[0]?.url ?? null },
     events: await listApplicationEvents(prisma, application.id),
     actions: getActionTransitions(application.status, "ADOPTER").filter((t) => t.trigger === "action"),
+    // »Rezerviraj ogled« je na voljo le v stanju »v pregledu« (US-05 AC 1).
+    canBookVisit: getActionTransitions(application.status, "ADOPTER").some((t) => t.trigger === "visit-booking"),
+    scheduledVisit: application.status === "VISIT_SCHEDULED" ? await getScheduledVisit(application.id) : null,
   };
 }
