@@ -2,12 +2,15 @@
 
 import {
   addAnimalPhotos,
+  changeAnimalStatus,
+  changeAnimalStatusSchema,
   createAnimal,
   deleteAnimalPhoto,
   PHOTO_LIMITS,
   setCoverPhoto,
   updateAnimal,
 } from "@novi-dom/backend";
+import type { AnimalStatus } from "@novi-dom/backend/enums";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { type ActionResult, toActionError } from "@/lib/action-result";
@@ -37,6 +40,22 @@ export async function updateAnimalAction(animalId: string, values: unknown): Pro
   }
   revalidatePath(LIST);
   revalidatePath(detail(animalId));
+  return { ok: true };
+}
+
+export async function changeAnimalStatusAction(animalId: string, status: AnimalStatus): Promise<ActionResult> {
+  const actor = await requireActor();
+  const parsed = changeAnimalStatusSchema.safeParse({ animalId, status });
+  if (!parsed.success) return { ok: false, error: "Neveljaven status." };
+  try {
+    await changeAnimalStatus(actor, parsed.data);
+  } catch (error) {
+    return toActionError(error);
+  }
+  revalidatePath(LIST);
+  revalidatePath(detail(animalId));
+  // Javni katalog prikaže spremembo ob naslednjem nalaganju (US-01 AC 3).
+  revalidatePath("/", "layout");
   return { ok: true };
 }
 
