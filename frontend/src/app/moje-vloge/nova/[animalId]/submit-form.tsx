@@ -3,7 +3,7 @@
 import { ACKNOWLEDGE_WARNINGS_LABEL, MOTIVATION_MIN_LENGTH } from "@novi-dom/backend/validation";
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,7 +15,15 @@ const NOT_ACKNOWLEDGED = "APPLICATION_WARNINGS_NOT_ACKNOWLEDGED";
  * Obrazec za oddajo. Ob oceni Neujemanje mora posvojitelj označiti »Seznanjen sem z opozorili«
  * (US-03 AC 5); enako preveri tudi strežnik, ki oceno izračuna znova.
  */
-export function SubmitForm({ animalId, requireAcknowledgement }: { animalId: string; requireAcknowledgement: boolean }) {
+export function SubmitForm({
+  animalId,
+  cancelHref,
+  requireAcknowledgement,
+}: {
+  animalId: string;
+  cancelHref: string;
+  requireAcknowledgement: boolean;
+}) {
   const [pending, startTransition] = useTransition();
   const [motivation, setMotivation] = useState("");
   const [acknowledged, setAcknowledged] = useState(false);
@@ -30,6 +38,7 @@ export function SubmitForm({ animalId, requireAcknowledgement }: { animalId: str
   return (
     <form
       className="flex flex-col gap-4"
+      aria-labelledby="motivation-title"
       noValidate
       onSubmit={(e) => {
         e.preventDefault();
@@ -42,11 +51,15 @@ export function SubmitForm({ animalId, requireAcknowledgement }: { animalId: str
         startTransition(async () => setResult(await submitApplicationAction(animalId, motivation, acknowledged)));
       }}
     >
+      <section className="flex flex-col gap-4 rounded-xl border bg-card p-4 sm:p-5">
       <div className="flex flex-col gap-2">
-        <Label htmlFor="motivation">Zakaj želite posvojiti to žival?</Label>
+        <Label htmlFor="motivation" id="motivation-title" className="font-heading text-base font-semibold">
+          Zakaj želite posvojiti to žival?
+        </Label>
         <Textarea
           id="motivation"
           rows={5}
+          placeholder="Opišite svoj vsakdan, izkušnje in pričakovanja …"
           value={motivation}
           onChange={(e) => setMotivation(e.target.value)}
           aria-invalid={!!motivationError}
@@ -86,6 +99,8 @@ export function SubmitForm({ animalId, requireAcknowledgement }: { animalId: str
         </div>
       )}
 
+      </section>
+
       {result && !result.fieldErrors && (
         <p role="alert" className="text-sm text-destructive">
           {result.error}{" "}
@@ -102,7 +117,10 @@ export function SubmitForm({ animalId, requireAcknowledgement }: { animalId: str
         </p>
       )}
 
-      <div>
+      <div className="flex flex-wrap justify-end gap-2">
+        <Link href={cancelHref} className={buttonVariants({ variant: "outline", size: "lg" })}>
+          Prekliči
+        </Link>
         <Button type="submit" size="lg" disabled={pending}>
           {pending ? "Oddajanje …" : "Oddaj vlogo"}
         </Button>
