@@ -13,6 +13,12 @@ export default async function Page() {
       <p className="mt-2 text-muted-foreground">Pozdravljeni, {session?.user?.name}.</p>
       <ul className="mt-6 grid gap-4 sm:grid-cols-2">
         <li>
+          <Link href="/upravljanje/vloge" className="block rounded-xl border p-4 hover:bg-muted">
+            <span className="font-medium">Vloge</span>
+            <span className="mt-1 block text-sm text-muted-foreground">Obravnava vlog za posvojitev.</span>
+          </Link>
+        </li>
+        <li>
           <Link href="/upravljanje/zivali" className="block rounded-xl border p-4 hover:bg-muted">
             <span className="font-medium">Živali</span>
             <span className="mt-1 block text-sm text-muted-foreground">Vnos in urejanje živali ter fotografij.</span>
