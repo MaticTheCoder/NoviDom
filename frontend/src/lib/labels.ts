@@ -4,6 +4,7 @@ import type {
   AnimalStatus,
   Compatibility,
   EnergyLevel,
+  HousingType,
   KidsCompatibility,
   Sex,
   Species,
@@ -26,3 +27,4 @@ export const STATUS_LABEL: Record<AnimalStatus, string> = {
   RESERVED: "rezervirana",
   ADOPTED: "posvojena",
 };
+export const HOUSING_LABEL: Record<HousingType, string> = { APARTMENT: "stanovanje", HOUSE: "hiša" };
