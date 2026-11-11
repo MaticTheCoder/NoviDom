@@ -8,6 +8,7 @@ export * from "./services/households";
 export * from "./services/matching";
 export * from "./services/users";
 export * from "./state-machine";
+export * from "./time";
 export * from "./storage/photos";
 export * from "./validation/animal";
 export * from "./validation/application";
