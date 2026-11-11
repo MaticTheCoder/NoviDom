@@ -46,3 +46,16 @@ export const MATCH_LABEL: Record<MatchLevel, string> = { MATCH: "Ujemanje", COND
 export const formatDateTime = (d: Date) =>
   new Intl.DateTimeFormat("sl-SI", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Ljubljana" }).format(d);
 export const formatDate = (d: Date) => new Intl.DateTimeFormat("sl-SI", { dateStyle: "medium", timeZone: "Europe/Ljubljana" }).format(d);
+
+/** Približna starost iz ocenjenega datuma rojstva: »8 mesecev«, »3 leta«. */
+export function ageLabel(birthDate: Date, now = new Date()): string {
+  const months = (now.getFullYear() - birthDate.getFullYear()) * 12 + now.getMonth() - birthDate.getMonth();
+  if (months < 12) {
+    const m = Math.max(months, 0);
+    const mod = m % 100;
+    return mod === 1 ? `${m} mesec` : mod === 2 ? `${m} meseca` : mod === 3 || mod === 4 ? `${m} mesece` : `${m} mesecev`;
+  }
+  const y = Math.floor(months / 12);
+  const mod = y % 100;
+  return mod === 1 ? `${y} leto` : mod === 2 ? `${y} leti` : mod === 3 || mod === 4 ? `${y} leta` : `${y} let`;
+}

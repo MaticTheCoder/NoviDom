@@ -64,3 +64,5 @@ export const PHOTO_LIMITS = {
   maxPerAnimal: 10,
   types: ["image/jpeg", "image/png", "image/webp"],
 } as const;
+
+export { MAX_ACTIVE_APPLICATIONS, MOTIVATION_MIN_LENGTH } from "./application";

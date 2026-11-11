@@ -33,7 +33,7 @@ export const tooManyActiveError = (count: number) =>
  * Pravila oddaje vloge (US-02 AC 3, 4), skupna za oddajo in predogled strani za oddajo.
  * Vrne vprašalnik posvojitelja in žival, ob kršitvi vrže DomainError.
  */
-export async function checkSubmissionRules(tx: Tx, adopterId: string, animalId: string) {
+export async function checkSubmissionRules(tx: Tx | typeof prisma, adopterId: string, animalId: string) {
   const animal = await tx.animal.findUnique({ where: { id: animalId } });
   if (!animal) throw new DomainError(CommonErrorCode.NotFound, "Žival ne obstaja.");
   if (animal.status !== "AVAILABLE") {
