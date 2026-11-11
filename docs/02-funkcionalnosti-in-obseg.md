@@ -156,6 +156,7 @@ stateDiagram-v2
     OGLED_DOGOVORJEN --> V_PREGLEDU: odpoved termina / neprihod
     OGLED_DOGOVORJEN --> OGLED_OPRAVLJEN: prostovoljec vnese zapisnik
     OGLED_OPRAVLJEN --> ODOBRENA: vodja odobri
+    ODOBRENA --> OGLED_OPRAVLJEN: vodja umakne odobritev
     OGLED_OPRAVLJEN --> ZAVRNJENA: vodja zavrne
     V_PREGLEDU --> ZAVRNJENA: vodja zavrne
     ODOBRENA --> POSVOJENA: vodja zaključi posvojitev
@@ -164,7 +165,7 @@ stateDiagram-v2
     OGLED_DOGOVORJEN --> UMAKNJENA
     OGLED_OPRAVLJEN --> UMAKNJENA
     ODOBRENA --> UMAKNJENA
-    ODDANA --> ZAVRNJENA: samodejno ob posvojitvi
+    ODDANA --> ZAVRNJENA: samodejno ob posvojitvi (iz vsakega aktivnega stanja razen ODOBRENA)
     POSVOJENA --> [*]
     ZAVRNJENA --> [*]
     UMAKNJENA --> [*]
@@ -172,7 +173,9 @@ stateDiagram-v2
 
 Pravila:
 - Ob prehodu v **ODOBRENA** žival preide v *rezervirana*; za žival je lahko odobrena največ ena vloga.
-- Če je odobrena vloga umaknjena, se žival vrne v *na voljo*, ostale aktivne vloge pa nadaljujejo obravnavo.
+- Če je odobrena vloga umaknjena (posvojitelj umakne vlogo ali vodja umakne odobritev), se žival vrne v *na voljo*, ostale aktivne vloge pa nadaljujejo obravnavo.
+- Zavrnitev in umik odobritve zahtevata komentar z vsaj 10 znaki.
+- Tabela prehodov v kodi: `backend/src/state-machine/application.ts` (ADR-0006).
 - Ob prehodu v **POSVOJENA** se vse ostale aktivne vloge za isto žival (iz kateregakoli aktivnega stanja) samodejno zavrnejo.
 - Aktivna stanja so: ODDANA, V_PREGLEDU, OGLED_DOGOVORJEN, OGLED_OPRAVLJEN, ODOBRENA.
 
