@@ -7,3 +7,4 @@ export * from "./services/applications";
 export * from "./state-machine";
 export * from "./storage/photos";
 export * from "./validation/animal";
+export * from "./validation/application";
