@@ -1,6 +1,6 @@
 "use server";
 
-import { transitionApplication, transitionInputSchema } from "@novi-dom/backend";
+import { completeAdoption, transitionApplication, transitionInputSchema } from "@novi-dom/backend";
 import { revalidatePath } from "next/cache";
 import { type ActionResult, toActionError } from "@/lib/action-result";
 import { requireActor } from "@/lib/session";
@@ -15,6 +15,17 @@ export async function transitionAction(applicationId: string, to: string, commen
     return toActionError(error);
   }
   // Prehod lahko spremeni tudi status živali (odobritev → rezervirana), zato osvežimo vse strani.
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function completeAdoptionAction(applicationId: string): Promise<ActionResult> {
+  const actor = await requireActor();
+  try {
+    await completeAdoption(actor, applicationId);
+  } catch (error) {
+    return toActionError(error);
+  }
   revalidatePath("/", "layout");
   return { ok: true };
 }

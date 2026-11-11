@@ -22,10 +22,12 @@ export function TransitionPanel({
   applicationId,
   actions,
   otherApproved,
+  hasAdoption = false,
 }: {
   applicationId: string;
   actions: TransitionDefinition[];
   otherApproved: { id: string; adopter: { name: string } } | null;
+  hasAdoption?: boolean;
 }) {
   const [pending, startTransition] = useTransition();
   const [open, setOpen] = useState<TransitionDefinition | null>(null);
@@ -43,7 +45,7 @@ export function TransitionPanel({
     });
   };
 
-  if (actions.length === 0) return <p className="text-sm text-muted-foreground">Iz tega stanja vodja nima razpoložljivih dejanj.</p>;
+  if (actions.length === 0 && !hasAdoption) return <p className="text-sm text-muted-foreground">Iz tega stanja vodja nima razpoložljivih dejanj.</p>;
 
   const min = open?.minCommentLength ?? 0;
 
