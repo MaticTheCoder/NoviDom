@@ -46,7 +46,7 @@ export default async function ManagerApplicationPage({ params }: { params: Promi
             <TransitionPanel applicationId={app.id} actions={app.actions} otherApproved={app.otherApproved} />
           </section>
 
-          <MatchResult level={app.matchLevel} warnings={app.matchWarnings} title="Ocena ujemanja ob oddaji" />
+          <MatchResult audience="staff" level={app.matchLevel} warnings={app.matchWarnings} title="Ocena ujemanja ob oddaji" />
 
           <section className="flex flex-col gap-3">
             <h2 className="text-lg font-medium">Kandidat</h2>
