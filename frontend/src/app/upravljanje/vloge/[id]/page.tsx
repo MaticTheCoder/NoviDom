@@ -14,6 +14,7 @@ import {
   VISIT_OUTCOME_LABEL,
 } from "@/lib/labels";
 import { requireActor } from "@/lib/session";
+import { AdoptionDialog } from "./adoption-dialog";
 import { TransitionPanel } from "./transition-panel";
 
 export const metadata: Metadata = { title: "Vloga – Upravljanje – Novi dom" };
@@ -51,7 +52,17 @@ export default async function ManagerApplicationPage({ params }: { params: Promi
         <div className="flex flex-col gap-8">
           <section className="flex flex-col gap-3 rounded-xl border p-4">
             <h2 className="font-medium">Dejanja</h2>
-            <TransitionPanel applicationId={app.id} actions={app.actions} otherApproved={app.otherApproved} />
+            {app.adoptionPreview && (
+              <div>
+                <AdoptionDialog
+                applicationId={app.id}
+                animalName={app.animal.name}
+                adopterName={app.adopter.name}
+                otherActiveCount={app.adoptionPreview.otherActiveCount}
+                />
+              </div>
+            )}
+            <TransitionPanel applicationId={app.id} actions={app.actions} otherApproved={app.otherApproved} hasAdoption={!!app.adoptionPreview} />
           </section>
 
           <MatchResult audience="staff" level={app.matchLevel} warnings={app.matchWarnings} title="Ocena ujemanja ob oddaji" />

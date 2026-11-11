@@ -4,6 +4,7 @@ import type { ApplicationStatus } from "../../generated/prisma/client";
 import { getActionTransitions } from "../../state-machine";
 import { type Actor, requireManager } from "../guard";
 import { parseMatchWarnings } from "../matching";
+import { activeApplicationWhere } from "./active";
 import { listApplicationEvents } from "./events";
 import { parseHouseholdSnapshot } from "./snapshot";
 import { applicationNotFound } from "./transition";
@@ -82,5 +83,13 @@ export async function getApplicationForManager(actor: Actor, applicationId: stri
     // Gumbi z neposrednim prehodom; zaključek posvojitve ima svoje potrditveno okno (#36).
     actions: getActionTransitions(application.status, "MANAGER").filter((t) => t.trigger === "action"),
     otherApproved,
+    // »Zaključi posvojitev« je samo pri odobreni vlogi (US-07 AC 1); število za potrditveno okno (AC 2).
+    adoptionPreview: getActionTransitions(application.status, "MANAGER").some((t) => t.trigger === "adoption")
+      ? {
+          otherActiveCount: await prisma.application.count({
+            where: { animalId: application.animalId, id: { not: application.id }, ...activeApplicationWhere },
+          }),
+        }
+      : null,
   };
 }
