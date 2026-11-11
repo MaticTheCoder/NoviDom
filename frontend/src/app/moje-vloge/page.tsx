@@ -2,6 +2,7 @@ import { listMyApplications, MAX_ACTIVE_APPLICATIONS } from "@novi-dom/backend";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ApplicationStatusBadge } from "@/components/application-status-badge";
+import { MatchBadge } from "@/components/match-result";
 import { buttonVariants } from "@/components/ui/button";
 import { formatDate, SPECIES_LABEL } from "@/lib/labels";
 import { requireActor } from "@/lib/session";
@@ -51,7 +52,10 @@ export default async function MyApplicationsPage() {
                     Oddana {formatDate(a.submittedAt)} · zadnja sprememba {formatDate(a.lastChangeAt)}
                   </p>
                 </div>
-                <ApplicationStatusBadge status={a.status} />
+                <div className="flex flex-col items-end gap-1">
+                  <ApplicationStatusBadge status={a.status} />
+                  <MatchBadge level={a.matchLevel} />
+                </div>
               </Link>
             </li>
           ))}

@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ApplicationStatusBadge } from "@/components/application-status-badge";
-import { APPLICATION_STATUS_LABEL, formatDateTime, MATCH_LABEL, SPECIES_LABEL } from "@/lib/labels";
+import { MatchResult } from "@/components/match-result";
+import { APPLICATION_STATUS_LABEL, formatDateTime, SPECIES_LABEL } from "@/lib/labels";
 import { requireActor } from "@/lib/session";
 import { WithdrawButton } from "./withdraw-button";
 
@@ -64,18 +65,9 @@ export default async function MyApplicationPage({
         </section>
       )}
 
-      <section className="mt-8 flex flex-col gap-2">
-        <h2 className="text-lg font-medium">Ocena ujemanja ob oddaji: {MATCH_LABEL[app.matchLevel]}</h2>
-        {app.matchWarnings.length > 0 && (
-          <ul className="list-disc pl-5 text-sm">
-            {app.matchWarnings.map((w) => (
-              <li key={w.rule}>
-                {w.message} <span className="text-muted-foreground">({w.trigger})</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <div className="mt-8">
+        <MatchResult title="Ocena ujemanja ob oddaji" level={app.matchLevel} warnings={app.matchWarnings} />
+      </div>
 
       <section className="mt-8 flex flex-col gap-2">
         <h2 className="text-lg font-medium">Motivacija</h2>

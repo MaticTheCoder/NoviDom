@@ -2,8 +2,9 @@ import { formatYears, getSubmissionPreview, MAX_ACTIVE_APPLICATIONS } from "@nov
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { MatchResult } from "@/components/match-result";
 import { buttonVariants } from "@/components/ui/button";
-import { ageLabel, HOUSING_LABEL, MATCH_LABEL, SEX_LABEL, SPECIES_LABEL } from "@/lib/labels";
+import { ageLabel, HOUSING_LABEL, SEX_LABEL, SPECIES_LABEL } from "@/lib/labels";
 import { requireActor } from "@/lib/session";
 import { SubmitForm } from "./submit-form";
 
@@ -66,18 +67,7 @@ export default async function SubmitApplicationPage({ params }: { params: Promis
           </section>
         ) : (
           <div className="flex flex-col gap-8">
-            <section className="flex flex-col gap-2">
-              <h2 className="text-lg font-medium">Ocena ujemanja: {MATCH_LABEL[preview.match.level]}</h2>
-              {preview.match.warnings.length > 0 && (
-                <ul className="list-disc pl-5 text-sm">
-                  {preview.match.warnings.map((w) => (
-                    <li key={w.rule}>
-                      {w.message} <span className="text-muted-foreground">({w.trigger})</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
+            <MatchResult level={preview.match.level} warnings={preview.match.warnings} />
 
             <section className="flex flex-col gap-2">
               <div className="flex items-center justify-between gap-4">
