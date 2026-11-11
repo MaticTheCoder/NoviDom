@@ -43,8 +43,23 @@ describe("listFreeSlots (US-05 AC 2, 3)", () => {
     expect((await listFreeSlots(now)).map((x) => x.id)).toEqual([s.id]);
   });
 
+  it("z includeTaken vrne tudi zasedene termine z oznako taken, preklicanih ne", async () => {
+    const manager = await createUser("MANAGER");
+    const adopter = await createUser("ADOPTER");
+    const app = await createApplication(adopter.id, (await createAnimal(manager.id)).id, "VISIT_SCHEDULED");
+    const taken = await slot(DAY);
+    const free = await slot(2 * DAY);
+    await slot(3 * DAY, { isCancelled: true });
+    await prisma.visit.create({ data: { applicationId: app.id, slotId: taken.id } });
+    expect((await listFreeSlots(now, { includeTaken: true })).map((s) => [s.id, s.taken])).toEqual([
+      [taken.id, true],
+      [free.id, false],
+    ]);
+    expect((await listFreeSlots(now)).map((s) => s.id)).toEqual([free.id]);
+  });
+
   it("vrne lokalni datum in uro zavetišča", async () => {
     await slot(DAY); // 2026-11-12T12:00Z = 13:00 v Ljubljani
-    expect(await listFreeSlots(now)).toMatchObject([{ date: "2026-11-12", time: "13:00", startsAt: "2026-11-12T12:00:00.000Z" }]);
+    expect(await listFreeSlots(now)).toMatchObject([{ date: "2026-11-12", time: "13:00", endTime: "13:30", taken: false, startsAt: "2026-11-12T12:00:00.000Z" }]);
   });
 });
