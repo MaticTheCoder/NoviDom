@@ -56,8 +56,8 @@ export function ReportForm({
   return (
     <form onSubmit={submit} noValidate className="flex flex-col gap-4">
       <fieldset className="flex flex-col gap-2" aria-describedby={errors.recommendation ? "rec-error" : undefined}>
-        <legend className="mb-2 text-sm font-medium">Priporočilo</legend>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+        <legend className="mb-2 font-heading text-base font-semibold">Priporočilo</legend>
+        <div className="grid grid-cols-1 gap-2">
           {(Object.keys(RECOMMENDATION_LABEL) as Recommendation[]).map((value) => (
             <label
               key={value}
@@ -89,7 +89,9 @@ export function ReportForm({
       </fieldset>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="report-text">Zapisnik</Label>
+        <Label htmlFor="report-text" className="font-heading text-base font-semibold">
+          Zapisnik
+        </Label>
         <Textarea
           id="report-text"
           rows={6}
@@ -108,7 +110,7 @@ export function ReportForm({
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <Button type="submit" size="lg" className="min-h-11 w-full sm:w-auto" disabled={pending}>
+        <Button type="submit" size="lg" className="min-h-12 w-full" disabled={pending}>
           {pending ? "Shranjevanje …" : mode === "submit" ? "Oddaj zapisnik" : "Shrani spremembe"}
         </Button>
         <p role="status" className="text-sm">

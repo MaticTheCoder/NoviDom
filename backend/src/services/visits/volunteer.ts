@@ -24,7 +24,7 @@ export async function listVolunteerVisits(actor: Actor, now = new Date()) {
       slot: { select: { startsAt: true, endsAt: true } },
       report: { select: { recommendation: true } },
       application: {
-        select: { matchLevel: true, adopter: { select: { name: true } }, animal: { select: { name: true, species: true } } },
+        select: { matchLevel: true, adopter: { select: { name: true, phone: true } }, animal: { select: { name: true, species: true } } },
       },
     },
   });
