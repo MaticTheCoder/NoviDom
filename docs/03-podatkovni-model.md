@@ -225,6 +225,7 @@ Pravila iz poslovne logike so, kjer je mogoče, uveljavljena tudi v bazi, da ost
 - **Največ ena odobrena vloga na žival:** delni unikatni indeks na `Application(animalId) WHERE status = 'APPROVED'`.
 - **Termin ni dvakrat rezerviran:** delni unikatni indeks na `Visit(slotId) WHERE outcome <> 'CANCELLED'`.
 - Delni indeksi se dodajo z ročno SQL migracijo, ker jih Prisma shema ne izrazi neposredno.
+- **Revizijska sled je samo za vstavljanje:** sprožilec `application_event_no_update_delete` zavrne vsak `UPDATE` in `DELETE` na `ApplicationEvent` (ADR-0007).
 - Pravilo »največ 3 aktivne vloge na posvojitelja« se preverja v servisnem sloju znotraj transakcije.
 - Zaključek posvojitve (sprememba vloge, živali, samodejne zavrnitve ostalih vlog in zapis dogodkov) poteka v **eni transakciji**.
 - Ocena ujemanja se izračuna ob oddaji in shrani (`matchLevel`, `matchWarnings`) skupaj s kopijo vprašalnika, da je odločitev kasneje sledljiva.
