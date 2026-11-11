@@ -112,7 +112,8 @@ async function main() {
   );
   const manager = users.find((u) => u.role === "MANAGER")!;
 
-  await prisma.application.deleteMany();
+  // Revizijska sled je samo za vstavljanje (sprožilec zavrne DELETE), TRUNCATE pa je dovoljen.
+  await prisma.$executeRaw`TRUNCATE "ApplicationEvent", "Application" CASCADE`;
   await prisma.animal.deleteMany(); // fotografije se izbrišejo kaskadno
   for (const animal of ANIMALS) {
     await prisma.animal.create({

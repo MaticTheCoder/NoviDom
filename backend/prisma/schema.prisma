@@ -30,9 +30,10 @@ model User {
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
 
-  animalsCreated Animal[]      @relation("AnimalCreatedBy")
+  animalsCreated Animal[]           @relation("AnimalCreatedBy")
   household      Household?
   applications   Application[]
+  events         ApplicationEvent[]
 }
 
 // ---------------------------------------------------------------------------
@@ -101,6 +102,8 @@ model Application {
   decisionComment   String?
   submittedAt       DateTime          @default(now())
   closedAt          DateTime? // čas prehoda v končno stanje
+
+  events ApplicationEvent[]
 
   @@index([adopterId, status])
   @@index([animalId, status])
@@ -200,4 +203,20 @@ model AnimalPhoto {
   sortOrder Int    @default(0) // najnižja je naslovna fotografija
 
   @@index([animalId, sortOrder])
+}
+
+// Revizijska sled prehodov vloge (ADR-0007). Samo vstavljanje: sprožilec v bazi
+// prepreči UPDATE in DELETE, servisni sloj pa ponuja le zapis in branje.
+model ApplicationEvent {
+  id            String             @id @default(uuid()) @db.Uuid
+  applicationId String             @db.Uuid
+  application   Application        @relation(fields: [applicationId], references: [id], onDelete: Restrict)
+  fromStatus    ApplicationStatus? // null ob oddaji
+  toStatus      ApplicationStatus
+  actorId       String?            @db.Uuid // null = sistemska sprememba (npr. samodejna zavrnitev)
+  actor         User?              @relation(fields: [actorId], references: [id], onDelete: Restrict)
+  comment       String?
+  createdAt     DateTime           @default(now())
+
+  @@index([applicationId, createdAt])
 }
