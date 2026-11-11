@@ -16,3 +16,4 @@ export * from "./validation/animal";
 export * from "./validation/application";
 export * from "./validation/household";
 export * from "./validation/user";
+export * from "./validation/visit";
