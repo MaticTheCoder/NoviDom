@@ -1,12 +1,14 @@
-import { CommonErrorCode, getMyApplication, isDomainError } from "@novi-dom/backend";
+import { CommonErrorCode, getMyApplication, isDomainError, listMyApplications, MAX_ACTIVE_APPLICATIONS } from "@novi-dom/backend";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ApplicationStatusBadge } from "@/components/application-status-badge";
-import { MatchResult } from "@/components/match-result";
+import { MatchBadge, MatchResult } from "@/components/match-result";
+import { StatusTimeline } from "@/components/status-timeline";
 import { buttonVariants } from "@/components/ui/button";
-import { APPLICATION_STATUS_LABEL, formatDateTime, formatTime, formatVisitDay, SPECIES_LABEL } from "@/lib/labels";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { APPLICATION_STATUS_LABEL, capitalize, formatDate, formatDateTime, formatTime, formatVisitDay } from "@/lib/labels";
 import { requireActor } from "@/lib/session";
+import { ApplicationsList } from "../applications-list";
 import { WithdrawButton } from "./withdraw-button";
 
 export const metadata: Metadata = { title: "Vloga – Novi dom" };
@@ -17,6 +19,10 @@ function actorLabel(actor: { role: string } | null) {
   return actor.role === "ADOPTER" ? "vi" : "zavetišče";
 }
 
+const shortDay = (d: Date) =>
+  new Intl.DateTimeFormat("sl-SI", { weekday: "short", day: "numeric", month: "numeric", timeZone: "Europe/Ljubljana" }).format(d);
+
+/** Moje vloge s časovnico (WF-03): seznam levo, izbrana vloga desno. Na telefonu le podrobnost. */
 export default async function MyApplicationPage({
   params,
   searchParams,
@@ -25,107 +31,138 @@ export default async function MyApplicationPage({
   searchParams: Promise<{ oddana?: string; ogled?: string }>;
 }) {
   const [{ id }, { oddana, ogled }, actor] = await Promise.all([params, searchParams, requireActor()]);
-  const app = await getMyApplication(actor, id).catch((error) => {
-    if (isDomainError(error) && error.code === CommonErrorCode.NotFound) notFound();
-    throw error;
-  });
+  const [app, { applications, activeCount }] = await Promise.all([
+    getMyApplication(actor, id).catch((error) => {
+      if (isDomainError(error) && error.code === CommonErrorCode.NotFound) notFound();
+      throw error;
+    }),
+    listMyApplications(actor),
+  ]);
   const canWithdraw = app.actions.some((t) => t.to === "WITHDRAWN");
+  const visit = app.scheduledVisit;
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-10">
-      <Link href="/moje-vloge" className="text-sm text-muted-foreground hover:underline">
+    <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:py-10">
+      <Link href="/moje-vloge" className="text-sm text-muted-foreground hover:underline md:hidden">
         ← Moje vloge
       </Link>
+      <h1 className="hidden text-3xl font-semibold md:block">
+        Moje vloge{" "}
+        <span className="text-base font-normal text-muted-foreground">
+          ({activeCount} od {MAX_ACTIVE_APPLICATIONS} aktivnih)
+        </span>
+      </h1>
 
-      {oddana && (
-        <p role="status" className="mt-4 rounded-lg border bg-muted px-4 py-3 text-sm">
-          Vloga je oddana. Zavetišče jo bo pregledalo; spremembe stanja boste videli tukaj.
-        </p>
-      )}
-
-      {ogled && (
-        <p role="status" className="mt-4 rounded-lg border bg-muted px-4 py-3 text-sm">
-          Ogled je rezerviran. Podrobnosti so spodaj.
-        </p>
-      )}
-
-      <div className="mt-4 flex flex-wrap items-center gap-4">
-        {app.animal.coverPhoto ? (
-          // eslint-disable-next-line @next/next/no-img-element -- slike iz lokalne shrambe in SVG iz seeda
-          <img src={app.animal.coverPhoto} alt="" className="size-20 rounded-xl object-cover" />
-        ) : (
-          <div className="size-20 rounded-xl bg-muted" />
-        )}
-        <div className="flex-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Vloga za žival {app.animal.name}</h1>
-          <p className="text-sm text-muted-foreground">
-            {SPECIES_LABEL[app.animal.species]} · oddana {formatDateTime(app.submittedAt)}
-          </p>
+      <div className="mt-4 grid grid-cols-1 items-start gap-6 md:mt-6 md:grid-cols-[minmax(0,2fr)_minmax(0,5fr)]">
+        <div className="hidden md:block">
+          <ApplicationsList applications={applications} selectedId={app.id} />
         </div>
-        <ApplicationStatusBadge status={app.status} />
-      </div>
 
-      {app.canBookVisit && (
-        <section className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border p-4">
-          <p className="text-sm">Vloga je v pregledu. Rezervirajte termin za ogled živali v zavetišču.</p>
-          <Link href={`/moje-vloge/${app.id}/ogled`} className={buttonVariants()}>
-            Rezerviraj ogled
-          </Link>
-        </section>
-      )}
+        <article aria-labelledby="application-title" className="flex min-w-0 flex-col gap-6 rounded-xl border bg-card p-4 sm:p-6">
+          {(oddana || ogled) && (
+            <p role="status" className="rounded-lg bg-accent px-4 py-3 text-sm text-accent-foreground">
+              {oddana ? "Vloga je oddana. Zavetišče jo bo pregledalo; spremembe stanja boste videli tukaj." : "Ogled je rezerviran."}
+            </p>
+          )}
 
-      {app.scheduledVisit && (
-        <section className="mt-6 flex flex-col gap-1 rounded-xl border p-4">
-          <h2 className="font-medium">Dogovorjen ogled</h2>
-          <p className="text-sm">
-            {formatVisitDay(app.scheduledVisit.startsAt)} ob {formatTime(app.scheduledVisit.startsAt)}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {app.scheduledVisit.shelterName}, {app.scheduledVisit.address}
-          </p>
-        </section>
-      )}
-
-      {app.status === "REJECTED" && app.decisionComment && (
-        <section className="mt-6 rounded-xl border border-destructive/30 bg-destructive/5 p-4">
-          <h2 className="font-medium">Utemeljitev zavrnitve</h2>
-          <p className="mt-1 text-sm whitespace-pre-line">{app.decisionComment}</p>
-        </section>
-      )}
-
-      <div className="mt-8">
-        <MatchResult title="Ocena ujemanja ob oddaji" level={app.matchLevel} warnings={app.matchWarnings} />
-      </div>
-
-      <section className="mt-8 flex flex-col gap-2">
-        <h2 className="text-lg font-medium">Motivacija</h2>
-        <p className="text-sm whitespace-pre-line">{app.motivation}</p>
-      </section>
-
-      <section className="mt-8 flex flex-col gap-3">
-        <h2 className="text-lg font-medium">Zgodovina</h2>
-        <ol className="flex flex-col gap-3 border-l pl-4">
-          {app.events.map((e) => (
-            <li key={e.id} className="text-sm">
-              <p>
-                <span className="font-medium">{APPLICATION_STATUS_LABEL[e.toStatus]}</span>{" "}
-                <span className="text-muted-foreground">
-                  · {formatDateTime(e.createdAt)} · {actorLabel(e.actor)}
-                </span>
+          <header className="flex items-center gap-4">
+            {app.animal.coverPhoto ? (
+              // eslint-disable-next-line @next/next/no-img-element -- slike iz lokalne shrambe in SVG iz seeda
+              <img src={app.animal.coverPhoto} alt="" className="size-16 shrink-0 rounded-lg object-cover sm:size-20" />
+            ) : (
+              <div className="size-16 shrink-0 rounded-lg bg-muted sm:size-20" />
+            )}
+            <div className="flex flex-col gap-1">
+              <h2 id="application-title" className="text-xl font-semibold sm:text-2xl">
+                Vloga za posvojitev: {app.animal.name}
+              </h2>
+              <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                <MatchBadge level={app.matchLevel} />
+                oddana {formatDate(app.submittedAt)}
               </p>
-              {e.comment && <p className="mt-1 whitespace-pre-line text-muted-foreground">{e.comment}</p>}
-            </li>
-          ))}
-        </ol>
-      </section>
+            </div>
+          </header>
 
-      {canWithdraw && (
-        <section className="mt-10 flex flex-col gap-2 border-t pt-6">
-          <h2 className="text-lg font-medium">Umik vloge</h2>
-          <p className="text-sm text-muted-foreground">Vlogo lahko umaknete kadarkoli pred zaključkom posvojitve.</p>
-          <WithdrawButton applicationId={app.id} animalName={app.animal.name} />
-        </section>
-      )}
+          <StatusTimeline
+            status={app.status}
+            events={app.events}
+            detail={visit ? { VISIT_SCHEDULED: `${shortDay(visit.startsAt)} ob ${formatTime(visit.startsAt)}` } : undefined}
+          />
+
+          {app.status === "REJECTED" && app.decisionComment && (
+            <section className="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
+              <h3 className="font-medium">Utemeljitev zavrnitve</h3>
+              <p className="mt-1 text-sm whitespace-pre-line">{app.decisionComment}</p>
+            </section>
+          )}
+
+          {visit && (
+            <section className="rounded-lg bg-secondary p-4">
+              <h3 className="font-medium">Dogovorjen ogled</h3>
+              <p className="mt-1">
+                {formatVisitDay(visit.startsAt)} ob {formatTime(visit.startsAt)}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {visit.shelterName}, {visit.address}
+              </p>
+            </section>
+          )}
+
+          {app.canBookVisit && (
+            <section className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-secondary p-4">
+              <p className="text-sm">Vloga je v pregledu. Izberite termin za ogled živali v zavetišču.</p>
+              <Link href={`/moje-vloge/${app.id}/ogled`} className={buttonVariants()}>
+                Rezerviraj ogled
+              </Link>
+            </section>
+          )}
+
+          {canWithdraw && (
+            <div className="flex justify-end">
+              <WithdrawButton applicationId={app.id} animalName={app.animal.name} />
+            </div>
+          )}
+
+          <section className="flex flex-col gap-2">
+            <h3 className="font-heading text-lg font-semibold">Zgodovina</h3>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Datum</TableHead>
+                  <TableHead>Sprememba</TableHead>
+                  <TableHead className="hidden sm:table-cell">Kdo</TableHead>
+                  <TableHead>Komentar</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {[...app.events].reverse().map((e) => (
+                  <TableRow key={e.id}>
+                    <TableCell className="tabular-nums">{formatDateTime(e.createdAt)}</TableCell>
+                    <TableCell className="whitespace-normal">
+                      {e.fromStatus
+                        ? `${capitalize(APPLICATION_STATUS_LABEL[e.fromStatus])} → ${APPLICATION_STATUS_LABEL[e.toStatus]}`
+                        : capitalize(APPLICATION_STATUS_LABEL[e.toStatus])}
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">{actorLabel(e.actor)}</TableCell>
+                    <TableCell className="whitespace-normal">{e.comment ?? "–"}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </section>
+
+          <details className="group rounded-lg border p-4">
+            <summary className="cursor-pointer font-medium">Ocena ujemanja in motivacija ob oddaji</summary>
+            <div className="mt-4 flex flex-col gap-4">
+              <MatchResult title="Ocena ujemanja ob oddaji" level={app.matchLevel} warnings={app.matchWarnings} />
+              <div>
+                <h4 className="text-sm font-medium">Motivacija</h4>
+                <p className="mt-1 text-sm whitespace-pre-line">{app.motivation}</p>
+              </div>
+            </div>
+          </details>
+        </article>
+      </div>
     </main>
   );
 }
