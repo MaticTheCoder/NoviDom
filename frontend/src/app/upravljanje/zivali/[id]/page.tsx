@@ -8,6 +8,7 @@ import { requireActor } from "@/lib/session";
 import { updateAnimalAction } from "../actions";
 import { AnimalForm } from "../animal-form";
 import { PhotoManager } from "../photo-manager";
+import { StatusControl } from "../status-control";
 
 export const metadata: Metadata = { title: "Urejanje živali – Novi dom" };
 
@@ -45,6 +46,11 @@ export default async function EditAnimalPage({
           Žival je shranjena s statusom »sprejeta«. Dodajte še fotografije.
         </p>
       )}
+
+      <section className="mb-10 flex flex-col gap-3">
+        <h2 className="text-lg font-medium">Status</h2>
+        <StatusControl animalId={animal.id} status={animal.status} missing={animal.missing.map((m) => m.label)} />
+      </section>
 
       <section className="mb-10 flex flex-col gap-3">
         <h2 className="text-lg font-medium">Fotografije</h2>
