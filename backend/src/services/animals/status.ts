@@ -1,6 +1,7 @@
 import { prisma } from "../../db";
 import { CommonErrorCode, DomainError } from "../../errors";
 import type { Animal, AnimalStatus, Prisma } from "../../generated/prisma/client";
+import { type Actor, requireManager } from "../guard";
 
 // ---------------------------------------------------------------------------
 // Pravila spremembe statusa živali (US-01). Čiste funkcije brez dostopa do baze.
@@ -109,8 +110,6 @@ async function countActiveApplications(_tx: Tx, _animalId: string): Promise<numb
   return 0;
 }
 
-export type Actor = { userId: string };
-
 /**
  * Ročna sprememba statusa živali (US-01 AC 3–5). Izvede jo lahko le aktiven vodja;
  * vloga in isActive se zaradi varnosti prebereta iz baze, ne iz seje.
@@ -120,10 +119,7 @@ export async function changeAnimalStatus(
   input: { animalId: string; status: AnimalStatus },
 ): Promise<Animal> {
   return prisma.$transaction(async (tx) => {
-    const user = await tx.user.findUnique({ where: { id: actor.userId }, select: { role: true, isActive: true } });
-    if (!user || !user.isActive || user.role !== "MANAGER") {
-      throw new DomainError(CommonErrorCode.Forbidden, "Status živali lahko spremeni le vodja zavetišča.");
-    }
+    await requireManager(tx, actor, "Status živali lahko spremeni le vodja zavetišča.");
 
     const animal = await tx.animal.findUnique({ where: { id: input.animalId } });
     if (!animal) {

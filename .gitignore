@@ -18,7 +18,7 @@ build/
 !.env.example
 
 # Naložene datoteke (fotografije živali v razvoju)
-uploads/
+/uploads/
 
 # Testi
 coverage/
