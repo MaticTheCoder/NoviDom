@@ -4,7 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ApplicationStatusBadge } from "@/components/application-status-badge";
 import { MatchResult } from "@/components/match-result";
-import { APPLICATION_STATUS_LABEL, formatDateTime, SPECIES_LABEL } from "@/lib/labels";
+import { buttonVariants } from "@/components/ui/button";
+import { APPLICATION_STATUS_LABEL, formatDateTime, formatTime, formatVisitDay, SPECIES_LABEL } from "@/lib/labels";
 import { requireActor } from "@/lib/session";
 import { WithdrawButton } from "./withdraw-button";
 
@@ -21,9 +22,9 @@ export default async function MyApplicationPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ oddana?: string }>;
+  searchParams: Promise<{ oddana?: string; ogled?: string }>;
 }) {
-  const [{ id }, { oddana }, actor] = await Promise.all([params, searchParams, requireActor()]);
+  const [{ id }, { oddana, ogled }, actor] = await Promise.all([params, searchParams, requireActor()]);
   const app = await getMyApplication(actor, id).catch((error) => {
     if (isDomainError(error) && error.code === CommonErrorCode.NotFound) notFound();
     throw error;
@@ -42,6 +43,12 @@ export default async function MyApplicationPage({
         </p>
       )}
 
+      {ogled && (
+        <p role="status" className="mt-4 rounded-lg border bg-muted px-4 py-3 text-sm">
+          Ogled je rezerviran. Podrobnosti so spodaj.
+        </p>
+      )}
+
       <div className="mt-4 flex flex-wrap items-center gap-4">
         {app.animal.coverPhoto ? (
           // eslint-disable-next-line @next/next/no-img-element -- slike iz lokalne shrambe in SVG iz seeda
@@ -57,6 +64,27 @@ export default async function MyApplicationPage({
         </div>
         <ApplicationStatusBadge status={app.status} />
       </div>
+
+      {app.canBookVisit && (
+        <section className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border p-4">
+          <p className="text-sm">Vloga je v pregledu. Rezervirajte termin za ogled živali v zavetišču.</p>
+          <Link href={`/moje-vloge/${app.id}/ogled`} className={buttonVariants()}>
+            Rezerviraj ogled
+          </Link>
+        </section>
+      )}
+
+      {app.scheduledVisit && (
+        <section className="mt-6 flex flex-col gap-1 rounded-xl border p-4">
+          <h2 className="font-medium">Dogovorjen ogled</h2>
+          <p className="text-sm">
+            {formatVisitDay(app.scheduledVisit.startsAt)} ob {formatTime(app.scheduledVisit.startsAt)}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {app.scheduledVisit.shelterName}, {app.scheduledVisit.address}
+          </p>
+        </section>
+      )}
 
       {app.status === "REJECTED" && app.decisionComment && (
         <section className="mt-6 rounded-xl border border-destructive/30 bg-destructive/5 p-4">
