@@ -35,8 +35,8 @@ export async function SiteHeader() {
   const nav = NAV[user?.role ?? "GUEST"];
 
   return (
-    <header className="bg-background">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-8 gap-y-2 px-4 py-4 sm:px-8">
+    <header className="border-b bg-background">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-8 gap-y-2 px-4 py-3 sm:px-8">
         <Link href={user?.role === "MANAGER" ? "/upravljanje" : "/"} className="rounded-md" aria-label="Novi dom, domov">
           <Logo />
         </Link>

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Figtree, Fraunces } from "next/font/google";
+import { Bricolage_Grotesque, Public_Sans } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
-// »Okno domov« (#90): naslovi v Fraunces (mehka serifna, os SOFT), besedilo v Figtree.
+// »Smreka in ploščica« (#92): naslovi v Bricolage Grotesque, besedilo, obrazci in tabele v Public Sans.
 // latin-ext vsebuje šumnike (č, š, ž).
-const display = Fraunces({ variable: "--font-display", subsets: ["latin", "latin-ext"], axes: ["SOFT", "opsz"], display: "swap" });
-const body = Figtree({ variable: "--font-body", subsets: ["latin", "latin-ext"], display: "swap" });
+const display = Bricolage_Grotesque({ variable: "--font-display", subsets: ["latin", "latin-ext"], display: "swap" });
+const body = Public_Sans({ variable: "--font-body", subsets: ["latin", "latin-ext"], display: "swap" });
 
 export const metadata: Metadata = {
   title: "Novi dom",

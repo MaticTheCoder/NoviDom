@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { AnimalTraits } from "@/components/animal-traits";
-import { ArchPhoto } from "@/components/logo";
+import { AnimalPhoto } from "@/components/logo";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { MatchResult } from "@/components/match-result";
 import { buttonVariants } from "@/components/ui/button";
@@ -40,13 +40,13 @@ export default async function SubmitApplicationPage({ params }: { params: Promis
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:py-10">
       <Breadcrumbs items={[{ label: "Živali", href: "/" }, { label: animal.name, href: profile }, { label: "Oddaja vloge" }]} />
-      <h1 className="mt-2 text-3xl sm:text-5xl">{animal.sex === "FEMALE" ? `Bi bila ${animal.name} pri vas srečna?` : `Bi bil ${animal.name} pri vas srečen?`}</h1>
+      <h1 className="mt-2 text-3xl sm:text-4xl">Vloga za posvojitev: {animal.name}</h1>
 
       <div className="mt-6 grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-        <aside className="flex flex-col items-center gap-4 text-center">
-          <ArchPhoto framed src={animal.photos[0]?.url ?? null} alt={animal.name} className="w-full" imgClassName="aspect-[3/4]" />
+        <aside className="flex flex-col gap-4">
+          <AnimalPhoto src={animal.photos[0]?.url ?? null} alt={animal.name} tag={animal.name} imgClassName="aspect-[4/5]" />
           <div>
-            <h2 className="text-4xl">{animal.name}</h2>
+            <h2 className="sr-only">{animal.name}</h2>
             <p className="text-sm text-muted-foreground">
               {SPECIES_LABEL[animal.species]}, {SEX_LABEL[animal.sex]}, približno {ageLabel(animal.birthDateApprox)}
             </p>

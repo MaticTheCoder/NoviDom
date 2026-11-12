@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ApplicationStatusBadge } from "@/components/application-status-badge";
 import { Breadcrumbs } from "@/components/breadcrumbs";
-import { ArchPhoto } from "@/components/logo";
+import { AnimalPhoto } from "@/components/logo";
 import { MatchResult } from "@/components/match-result";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -56,7 +56,7 @@ export default async function ManagerApplicationPage({ params }: { params: Promi
     <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:py-10">
       <Breadcrumbs items={[{ label: "Vloge", href: "/upravljanje/vloge" }, { label: `${app.adopter.name} → ${app.animal.name}` }]} />
       <div className="mt-3 flex flex-wrap items-center gap-4">
-        <ArchPhoto src={app.animal.coverPhoto} alt="" className="h-24 w-20 shrink-0" imgClassName="rounded-b-xl" />
+        <AnimalPhoto src={app.animal.coverPhoto} alt="" className="size-16 shrink-0 sm:size-20" />
         <h1 className="text-3xl sm:text-4xl">
           Vloga: {app.adopter.name} → {app.animal.name}
         </h1>
@@ -94,7 +94,7 @@ export default async function ManagerApplicationPage({ params }: { params: Promi
 
         <Card title="Žival">
           <div className="flex items-center gap-3">
-            <ArchPhoto src={app.animal.coverPhoto} alt="" className="h-20 w-16 shrink-0" imgClassName="rounded-b-xl" />
+            <AnimalPhoto src={app.animal.coverPhoto} alt="" className="size-20 shrink-0" />
             <div>
               <Link href={`/upravljanje/zivali/${app.animal.id}`} className="font-medium hover:underline">
                 {app.animal.name}

@@ -14,7 +14,7 @@ export function NavLink({ href, children, exact = false }: { href: string; child
       aria-current={active ? "page" : undefined}
       className={cn(
         "px-1 py-1 text-[0.95rem] whitespace-nowrap transition-colors hover:text-foreground",
-        active ? "border-b-2 border-primary font-semibold text-foreground" : "border-b-2 border-transparent text-muted-foreground",
+        active ? "border-b-2 border-brass font-semibold text-foreground" : "border-b-2 border-transparent text-muted-foreground",
       )}
     >
       {children}
