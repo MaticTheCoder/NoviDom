@@ -19,6 +19,28 @@ pnpm dev                 # aplikacija na http://localhost:3000
 
 Delovanje povezave z bazo preveriš na `http://localhost:3000/api/health`.
 
+Če je port 3000 zaseden, zaženi na drugem: `pnpm dev -p 3001`.
+
+### Po posodobitvi kode (`git pull`, združen PR)
+
+Prisma Client v `backend/src/generated/` ni v gitu, zato ga je treba po spremembi sheme ustvariti znova. Brez tega strežnik javi npr. `Cannot convert undefined or null to object` pri uvozu enuma.
+
+```bash
+pnpm install             # posodobi odvisnosti in regenerira Prisma Client
+pnpm db:migrate          # uveljavi nove migracije
+```
+
+Nato znova zaženi `pnpm dev`, ker ima tekoči strežnik stari Prisma Client naložen v pomnilniku.
+
+### Produkcijski zagon (npr. za predstavitev)
+
+V razvojnem načinu se vsaka stran ob prvem obisku prevaja, v produkcijskem je vse prevedeno vnaprej. Pred buildom ustavi `pnpm dev`.
+
+```bash
+pnpm build
+pnpm --filter @novi-dom/frontend start -p 3001
+```
+
 | Ukaz | Opis |
 |---|---|
 | `pnpm dev` | razvojni strežnik Next.js |
@@ -30,13 +52,18 @@ Delovanje povezave z bazo preveriš na `http://localhost:3000/api/health`.
 
 ### Testni uporabniki
 
-`pnpm db:seed` ustvari spodnje račune (vsi z geslom `NoviDom123!`) in 10 živali (8 *na voljo*, 2 *sprejeti*).
+`pnpm db:seed` ustvari spodnje račune (vsi z geslom `NoviDom123!`), 10 živali s fotografijami (8 *na voljo*, 2 *sprejeti*) in 36 terminov ogledov v naslednjih 14 dneh (pon–sob ob 10:00, 11:00 in 16:00, izmenično za oba prostovoljca). Seed ob vsakem zagonu pobriše vse vloge in termine.
 
 | E-pošta | Vloga |
 |---|---|
 | `vodja@novidom.si` | vodja zavetišča |
 | `prostovoljec1@novidom.si`, `prostovoljec2@novidom.si` | prostovoljec |
-| `ana@example.com`, `marko@example.com` | posvojitelj |
+| `ana@example.com` | posvojiteljica z izpolnjenim vprašalnikom (stanovanje brez vrta, otrok 4 leta, mačka) |
+| `marko@example.com` | posvojitelj brez vprašalnika, za prikaz prve oddaje vloge |
+
+Posvojitelji se lahko registrirajo sami (`/registracija`). Prostovoljce in vodjo ustvari samo seed, ker upravljanje prostovoljcev (US-14) ni del MVP. Prostovoljec vidi le oglede v terminih, ki so dodeljeni njemu, zapisnik pa lahko odda šele po začetku termina.
+
+Avtorji fotografij in licence so v [`frontend/public/animals/ATTRIBUTION.md`](frontend/public/animals/ATTRIBUTION.md).
 
 ## Tehnologije
 
@@ -47,7 +74,7 @@ Delovanje povezave z bazo preveriš na `http://localhost:3000/api/health`.
 | Podatkovna baza | PostgreSQL 16, Prisma ORM |
 | Avtentikacija | Auth.js v5 (Credentials), argon2, JWT seja v `httpOnly` piškotku |
 | Lokalni razvoj | Docker Compose (PostgreSQL, Mailpit), pnpm workspace |
-| Testiranje | Vitest, Playwright |
+| Testiranje | Vitest: enotski testi (pravila, avtomat stanj, ocena ujemanja) in integracijski testi na bazi `novidom_test` (sočasnost, atomarnost) |
 
 ## Struktura repozitorija
 
