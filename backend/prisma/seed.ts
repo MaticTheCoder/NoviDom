@@ -23,6 +23,19 @@ const yearsAgo = (years: number) => {
   return d;
 };
 
+// Prave fotografije (Wikimedia Commons, avtorji v frontend/public/animals/ATTRIBUTION.md).
+const PHOTOS: Record<string, string> = {
+  Rex: "/animals/rex.jpg",
+  Luna: "/animals/luna.jpg",
+  Bobi: "/animals/bobi.jpg",
+  Ajda: "/animals/ajda.jpg",
+  Tim: "/animals/tim.jpg",
+  Muri: "/animals/muri.jpg",
+  Mica: "/animals/mica.jpg",
+  Tačka: "/animals/tacka.jpg",
+  Garfi: "/animals/garfi.jpg",
+};
+
 type SeedAnimal = Omit<Prisma.AnimalCreateManyInput, "createdById">;
 
 const ANIMALS: SeedAnimal[] = [
@@ -133,7 +146,7 @@ async function main() {
         ...animal,
         createdById: manager.id,
         photos: {
-          create: [{ url: animal.species === "DOG" ? "/animals/pes.svg" : "/animals/macka.svg", sortOrder: 0 }],
+          create: [{ url: PHOTOS[animal.name] ?? (animal.species === "DOG" ? "/animals/pes.svg" : "/animals/macka.svg"), sortOrder: 0 }],
         },
       },
     });

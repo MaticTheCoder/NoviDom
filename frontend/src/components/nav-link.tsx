@@ -13,8 +13,8 @@ export function NavLink({ href, children, exact = false }: { href: string; child
       href={href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "rounded-md px-2 py-1 text-sm whitespace-nowrap transition-colors hover:bg-secondary",
-        active ? "font-semibold text-foreground underline decoration-brass decoration-2 underline-offset-[6px]" : "text-muted-foreground",
+        "px-1 py-1 text-[0.95rem] whitespace-nowrap transition-colors hover:text-foreground",
+        active ? "border-b-2 border-primary font-semibold text-foreground" : "border-b-2 border-transparent text-muted-foreground",
       )}
     >
       {children}

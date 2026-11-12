@@ -46,6 +46,7 @@ export async function getApplicationForManager(actor: Actor, applicationId: stri
           id: true,
           name: true,
           species: true,
+          sex: true,
           status: true,
           internalNotes: true,
           photos: { orderBy: { sortOrder: "asc" }, take: 1, select: { url: true } },

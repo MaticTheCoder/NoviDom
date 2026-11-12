@@ -62,8 +62,8 @@ export function ReportForm({
             <label
               key={value}
               className={cn(
-                "flex min-h-11 cursor-pointer items-center justify-center rounded-lg border px-3 text-sm font-medium has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50",
-                recommendation === value ? "border-primary bg-primary text-primary-foreground" : "hover:bg-muted",
+                "flex min-h-12 cursor-pointer items-center justify-center rounded-full px-4 font-semibold transition-colors has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50",
+                recommendation === value ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-accent",
               )}
             >
               <input

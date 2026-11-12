@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { AnimalTraits } from "@/components/animal-traits";
+import { ArchPhoto } from "@/components/logo";
 import { buttonVariants } from "@/components/ui/button";
 import { ageLabel, SEX_LABEL, SPECIES_LABEL, STATUS_LABEL } from "@/lib/labels";
 
@@ -28,18 +29,13 @@ export default async function AnimalProfilePage({ params }: { params: Promise<{ 
       <Link href="/" className="text-sm text-muted-foreground hover:underline">
         ← Vse živali
       </Link>
-      <div className="mt-4 grid gap-8 md:grid-cols-2">
+      <div className="mt-6 grid gap-10 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <div className="flex flex-col gap-3">
-          <div className="aspect-[4/3] overflow-hidden rounded-xl bg-muted">
-            {animal.photos[0] && (
-              // eslint-disable-next-line @next/next/no-img-element -- slike iz lokalne shrambe in SVG iz seeda
-              <img src={animal.photos[0].url} alt={animal.name} className="size-full object-cover" />
-            )}
-          </div>
+          <ArchPhoto framed src={animal.photos[0]?.url ?? null} alt={animal.name} imgClassName="aspect-[3/4]" />
           {animal.photos.length > 1 && (
             <ul className="grid grid-cols-4 gap-2">
               {animal.photos.slice(1).map((p, i) => (
-                <li key={p.id} className="aspect-square overflow-hidden rounded-lg bg-muted">
+                <li key={p.id} className="aspect-square overflow-hidden rounded-2xl bg-muted">
                   {/* eslint-disable-next-line @next/next/no-img-element -- slike iz lokalne shrambe */}
                   <img src={p.url} alt={`${animal.name}, fotografija ${i + 2}`} className="size-full object-cover" />
                 </li>
@@ -50,7 +46,7 @@ export default async function AnimalProfilePage({ params }: { params: Promise<{ 
 
         <div className="flex flex-col gap-4">
           <div>
-            <h1 className="text-3xl font-semibold tracking-tight">{animal.name}</h1>
+            <h1 className="text-5xl">{animal.name}</h1>
             <p className="mt-1 text-muted-foreground">
               {SPECIES_LABEL[animal.species]}, {SEX_LABEL[animal.sex]}, približno {ageLabel(animal.birthDateApprox)}
             </p>
