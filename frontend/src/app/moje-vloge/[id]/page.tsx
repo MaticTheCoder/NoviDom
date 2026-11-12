@@ -2,7 +2,7 @@ import { CommonErrorCode, getMyApplication, isDomainError, listMyApplications, M
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArchPhoto } from "@/components/logo";
+import { AnimalPhoto } from "@/components/logo";
 import { MatchBadge, MatchResult } from "@/components/match-result";
 import { StatusTimeline } from "@/components/status-timeline";
 import { buttonVariants } from "@/components/ui/button";
@@ -67,7 +67,7 @@ export default async function MyApplicationPage({
           )}
 
           <header className="flex items-center gap-4">
-            <ArchPhoto src={app.animal.coverPhoto} alt="" className="h-20 w-16 shrink-0 sm:h-24 sm:w-20" imgClassName="rounded-b-xl" />
+            <AnimalPhoto src={app.animal.coverPhoto} alt="" className="size-16 shrink-0 sm:size-20" />
             <div className="flex flex-col gap-1">
               <h2 id="application-title" className="text-xl font-semibold sm:text-2xl">
                 Vloga za posvojitev: {app.animal.name}

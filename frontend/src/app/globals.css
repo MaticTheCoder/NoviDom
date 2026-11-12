@@ -51,79 +51,78 @@
 }
 
 :root {
-  /* Vizualna podoba »Okno domov« (#90): perunika, svetla lila, črnilo z vijoličnim odtenkom, zračno belo. */
-  --background: #fbfafe;
-  --foreground: #231f3a; /* črnilo */
+  /* Podoba »Smreka in ploščica« (#92): smreka, medenina (ploščica na ovratnici), skrilasto črnilo, hladen papir. */
+  --background: #f6f8f5; /* papir */
+  --foreground: #1e2a32; /* črnilo */
   --card: #ffffff;
-  --card-foreground: #231f3a;
+  --card-foreground: #1e2a32;
   --popover: #ffffff;
-  --popover-foreground: #231f3a;
-  --primary: #5844d4; /* perunika */
-  --primary-foreground: #ffffff;
-  --secondary: #efebfa; /* svetla lila */
-  --secondary-foreground: #231f3a;
-  --muted: #efebfa;
-  --muted-foreground: #625e7d;
-  --accent: #e6e1fa;
-  --accent-foreground: #3d2da8;
+  --popover-foreground: #1e2a32;
+  --primary: #1f5e4b; /* smreka */
+  --primary-foreground: #f6f8f5;
+  --secondary: #e6ece5; /* mah */
+  --secondary-foreground: #1e2a32;
+  --muted: #e6ece5;
+  --muted-foreground: #56656c;
+  --accent: #dfe9e2;
+  --accent-foreground: #173f33;
   --destructive: #b42318;
-  --border: #e7e2f5;
-  --input: #d9d3f0;
-  --ring: #8b7cf0;
-  /* Poudarek (ime --brass je ostalo iz #44): mehka perunika za oznake in trenutni korak. */
-  --brass: #c9c0f7;
-  --brass-foreground: #231f3a;
-  --chart-1: #5844d4;
-  --chart-2: #c9c0f7;
-  --chart-3: #8b7cf0;
-  --chart-4: #efebfa;
-  --chart-5: #625e7d;
-  --radius: 1rem;
-  --sidebar: #f5f2fd;
-  --sidebar-foreground: #231f3a;
-  --sidebar-primary: #5844d4;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #efebfa;
-  --sidebar-accent-foreground: #231f3a;
-  --sidebar-border: #e7e2f5;
-  --sidebar-ring: #8b7cf0;
+  --border: #d5ddd4;
+  --input: #c7d1c6;
+  --ring: #e3ae3a; /* medenina: viden fokus */
+  --brass: #e3ae3a; /* ploščica z imenom živali */
+  --brass-foreground: #1e2a32;
+  --chart-1: #1f5e4b;
+  --chart-2: #e3ae3a;
+  --chart-3: #4f8a77;
+  --chart-4: #8aa39a;
+  --chart-5: #56656c;
+  --radius: 0.75rem;
+  --sidebar: #eef2ed;
+  --sidebar-foreground: #1e2a32;
+  --sidebar-primary: #1f5e4b;
+  --sidebar-primary-foreground: #f6f8f5;
+  --sidebar-accent: #e6ece5;
+  --sidebar-accent-foreground: #1e2a32;
+  --sidebar-border: #d5ddd4;
+  --sidebar-ring: #e3ae3a;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #16131f;
-    --foreground: #ece9f7;
-    --card: #1f1b2c;
-    --card-foreground: #ece9f7;
-    --popover: #1f1b2c;
-    --popover-foreground: #ece9f7;
-    --primary: #a99bff;
-    --primary-foreground: #1a1430;
-    --secondary: #2a2540;
-    --secondary-foreground: #ece9f7;
-    --muted: #2a2540;
-    --muted-foreground: #a8a3c2;
-    --accent: #332a5e;
-    --accent-foreground: #ddd6ff;
+    --background: #121a1e;
+    --foreground: #e8eeea;
+    --card: #19242a;
+    --card-foreground: #e8eeea;
+    --popover: #19242a;
+    --popover-foreground: #e8eeea;
+    --primary: #6cc0a1;
+    --primary-foreground: #0f2a21;
+    --secondary: #223038;
+    --secondary-foreground: #e8eeea;
+    --muted: #223038;
+    --muted-foreground: #9fb0b4;
+    --accent: #1d3a31;
+    --accent-foreground: #cfe9df;
     --destructive: #f2867b;
-    --border: #322c47;
-    --input: #3d3656;
-    --ring: #a99bff;
-    --brass: #4c3fa0;
-    --brass-foreground: #ece9f7;
-    --chart-1: #a99bff;
-    --chart-2: #4c3fa0;
-    --chart-3: #8b7cf0;
-    --chart-4: #2a2540;
-    --chart-5: #a8a3c2;
-    --sidebar: #1f1b2c;
-    --sidebar-foreground: #ece9f7;
-    --sidebar-primary: #a99bff;
-    --sidebar-primary-foreground: #1a1430;
-    --sidebar-accent: #2a2540;
-    --sidebar-accent-foreground: #ece9f7;
-    --sidebar-border: #322c47;
-    --sidebar-ring: #a99bff;
+    --border: #2b3a42;
+    --input: #344650;
+    --ring: #e9bd5a;
+    --brass: #e9bd5a;
+    --brass-foreground: #121a1e;
+    --chart-1: #6cc0a1;
+    --chart-2: #e9bd5a;
+    --chart-3: #4f8a77;
+    --chart-4: #8aa39a;
+    --chart-5: #9fb0b4;
+    --sidebar: #19242a;
+    --sidebar-foreground: #e8eeea;
+    --sidebar-primary: #6cc0a1;
+    --sidebar-primary-foreground: #0f2a21;
+    --sidebar-accent: #223038;
+    --sidebar-accent-foreground: #e8eeea;
+    --sidebar-border: #2b3a42;
+    --sidebar-ring: #e9bd5a;
   }
 }
 
@@ -138,22 +137,22 @@
     @apply font-sans;
     color-scheme: light dark;
   }
-  /* Naslovi v Fraunces z mehkimi zaključki (os SOFT), besedilo v Figtree. */
+  /* Naslovi v Bricolage Grotesque (tesen razmik pri velikih velikostih), besedilo v Public Sans. */
   h1,
   h2,
   h3,
   .font-heading {
     font-family: var(--font-heading);
-    font-variation-settings: "SOFT" 100;
     text-wrap: balance;
   }
   h1 {
-    font-weight: 500;
-    letter-spacing: -0.015em;
+    font-weight: 700;
+    letter-spacing: -0.025em;
   }
   h2,
   h3 {
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: -0.01em;
   }
   p {
     text-wrap: pretty;

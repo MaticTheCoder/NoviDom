@@ -1,7 +1,7 @@
 import type { listMyApplications } from "@novi-dom/backend";
 import Link from "next/link";
 import { ApplicationStatusBadge } from "@/components/application-status-badge";
-import { ArchPhoto } from "@/components/logo";
+import { AnimalPhoto } from "@/components/logo";
 import { formatDate } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 
@@ -23,7 +23,7 @@ export function ApplicationsList({ applications, selectedId }: { applications: I
                 selected && "border-primary ring-1 ring-primary",
               )}
             >
-              <ArchPhoto src={a.animal.coverPhoto} alt="" className="h-16 w-12 shrink-0" imgClassName="rounded-b-lg" />
+              <AnimalPhoto src={a.animal.coverPhoto} alt="" className="size-14 shrink-0" imgClassName="rounded-xl" />
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-medium">{a.animal.name}</span>
                 <span className="block text-sm text-muted-foreground">oddana {formatDate(a.submittedAt)}</span>

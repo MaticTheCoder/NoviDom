@@ -3,7 +3,7 @@ import { TriangleAlert } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArchPhoto } from "@/components/logo";
+import { AnimalPhoto } from "@/components/logo";
 import { MatchBadge } from "@/components/match-result";
 import { formatDateTime, formatTime, formatVisitDay, HOUSING_LABEL, RECOMMENDATION_LABEL } from "@/lib/labels";
 import { requireActor } from "@/lib/session";
@@ -34,12 +34,12 @@ export default async function VolunteerVisitPage({ params }: { params: Promise<{
         ‹ Moji ogledi
       </Link>
       <div className="flex items-end gap-4">
-        <ArchPhoto src={visit.animal.coverPhoto} alt={visit.animal.name} className="h-32 w-24 shrink-0" imgClassName="rounded-b-xl" />
+        <AnimalPhoto src={visit.animal.coverPhoto} alt={visit.animal.name} className="size-24 shrink-0" />
         <div>
           <p className="text-sm text-muted-foreground">
             {formatVisitDay(visit.startsAt)}, {formatTime(visit.startsAt)}–{formatTime(visit.endsAt)}
           </p>
-          <h1 className="text-3xl">
+          <h1 className="text-2xl">
             {visit.animal.name} in {visit.adopter.name.split(" ")[0]}
           </h1>
         </div>
