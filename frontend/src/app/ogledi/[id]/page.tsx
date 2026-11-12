@@ -3,6 +3,7 @@ import { TriangleAlert } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArchPhoto } from "@/components/logo";
 import { MatchBadge } from "@/components/match-result";
 import { formatDateTime, formatTime, formatVisitDay, HOUSING_LABEL, RECOMMENDATION_LABEL } from "@/lib/labels";
 import { requireActor } from "@/lib/session";
@@ -32,12 +33,17 @@ export default async function VolunteerVisitPage({ params }: { params: Promise<{
       <Link href="/ogledi" className="inline-flex min-h-11 items-center text-sm text-muted-foreground hover:underline">
         ‹ Moji ogledi
       </Link>
-      <h1 className="text-2xl font-semibold">
-        Ogled <span className="tabular-nums">{formatTime(visit.startsAt)}</span>, {visit.animal.name}
-      </h1>
-      <p className="text-sm text-muted-foreground">
-        {formatVisitDay(visit.startsAt)}, {formatTime(visit.startsAt)}–{formatTime(visit.endsAt)}
-      </p>
+      <div className="flex items-end gap-4">
+        <ArchPhoto src={visit.animal.coverPhoto} alt={visit.animal.name} className="h-32 w-24 shrink-0" imgClassName="rounded-b-xl" />
+        <div>
+          <p className="text-sm text-muted-foreground">
+            {formatVisitDay(visit.startsAt)}, {formatTime(visit.startsAt)}–{formatTime(visit.endsAt)}
+          </p>
+          <h1 className="text-3xl">
+            {visit.animal.name} in {visit.adopter.name.split(" ")[0]}
+          </h1>
+        </div>
+      </div>
 
       <div className="mt-5 flex flex-col gap-4">
         <section aria-labelledby="candidate" className="flex flex-col gap-2 rounded-xl border bg-card p-4">

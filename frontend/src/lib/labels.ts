@@ -15,6 +15,10 @@ import type {
 } from "@novi-dom/backend/enums";
 
 export const SPECIES_LABEL: Record<Species, string> = { DOG: "pes", CAT: "mačka" };
+/** »pes«, »psička«, »mačak«, »mačka« glede na vrsto in spol. */
+export const animalNoun = (species: Species, sex: Sex) =>
+  species === "DOG" ? (sex === "FEMALE" ? "psička" : "pes") : sex === "FEMALE" ? "mačka" : "mačak";
+
 export const SEX_LABEL: Record<Sex, string> = { MALE: "samec", FEMALE: "samica" };
 export const SIZE_LABEL: Record<AnimalSize, string> = { SMALL: "majhna", MEDIUM: "srednja", LARGE: "velika" };
 export const ENERGY_LABEL: Record<EnergyLevel, string> = { LOW: "nizka", MEDIUM: "srednja", HIGH: "visoka" };

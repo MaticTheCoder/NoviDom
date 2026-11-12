@@ -4,16 +4,17 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ApplicationStatusBadge } from "@/components/application-status-badge";
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { ArchPhoto } from "@/components/logo";
 import { MatchResult } from "@/components/match-result";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
+  animalNoun,
   APPLICATION_STATUS_LABEL,
   capitalize,
   formatDateTime,
   HOUSING_LABEL,
   RECOMMENDATION_LABEL,
-  SPECIES_LABEL,
   STATUS_LABEL,
   VISIT_OUTCOME_LABEL,
 } from "@/lib/labels";
@@ -32,7 +33,7 @@ const RECOMMENDATION_STYLE = {
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   const id = `card-${title.toLowerCase()}`;
   return (
-    <section aria-labelledby={id} className="flex min-w-0 flex-col gap-3 rounded-xl border bg-card p-4 sm:p-5">
+    <section aria-labelledby={id} className="flex min-w-0 flex-col gap-3 rounded-3xl border bg-card p-5 sm:p-6">
       <h2 id={id} className="text-lg font-semibold">
         {title}
       </h2>
@@ -54,8 +55,9 @@ export default async function ManagerApplicationPage({ params }: { params: Promi
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:py-10">
       <Breadcrumbs items={[{ label: "Vloge", href: "/upravljanje/vloge" }, { label: `${app.adopter.name} → ${app.animal.name}` }]} />
-      <div className="mt-2 flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-semibold sm:text-3xl">
+      <div className="mt-3 flex flex-wrap items-center gap-4">
+        <ArchPhoto src={app.animal.coverPhoto} alt="" className="h-24 w-20 shrink-0" imgClassName="rounded-b-xl" />
+        <h1 className="text-3xl sm:text-4xl">
           Vloga: {app.adopter.name} → {app.animal.name}
         </h1>
         <ApplicationStatusBadge status={app.status} />
@@ -92,18 +94,13 @@ export default async function ManagerApplicationPage({ params }: { params: Promi
 
         <Card title="Žival">
           <div className="flex items-center gap-3">
-            {app.animal.coverPhoto ? (
-              // eslint-disable-next-line @next/next/no-img-element -- slike iz lokalne shrambe in SVG iz seeda
-              <img src={app.animal.coverPhoto} alt="" className="size-16 rounded-lg object-cover" />
-            ) : (
-              <div className="size-16 rounded-lg bg-muted" />
-            )}
+            <ArchPhoto src={app.animal.coverPhoto} alt="" className="h-20 w-16 shrink-0" imgClassName="rounded-b-xl" />
             <div>
               <Link href={`/upravljanje/zivali/${app.animal.id}`} className="font-medium hover:underline">
                 {app.animal.name}
               </Link>
               <p className="text-sm text-muted-foreground">
-                {SPECIES_LABEL[app.animal.species]}, {STATUS_LABEL[app.animal.status]}
+                {animalNoun(app.animal.species, app.animal.sex)}, {STATUS_LABEL[app.animal.status]}
               </p>
             </div>
           </div>
@@ -158,7 +155,7 @@ export default async function ManagerApplicationPage({ params }: { params: Promi
         </TransitionPanel>
       </div>
 
-      <section aria-labelledby="history" className="mt-6 flex flex-col gap-2 rounded-xl border bg-card p-4 sm:p-5">
+      <section aria-labelledby="history" className="mt-6 flex flex-col gap-2 rounded-3xl border bg-card p-5 sm:p-6">
         <h2 id="history" className="text-lg font-semibold">
           Zgodovina
         </h2>

@@ -1,31 +1,50 @@
 import { cn } from "@/lib/utils";
 
-/**
- * Znak Novi dom: ploščica z ovratnice v obliki hišice, s tačko. Ploščica je medeninasta
- * (spomin na ploščico z imenom in naslovom živali), oblika hiše pomeni novi dom.
- */
+/** Znak Novi dom: obokano okno (pogled domov). Enaka oblika je pri fotografijah živali. */
 export function LogoMark({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 32 32" aria-hidden className={cn("size-8 shrink-0", className)}>
-      <circle cx="16" cy="4.6" r="2.9" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-foreground/70" />
-      <path d="M16 7.2 27.2 15.4V26a3.2 3.2 0 0 1-3.2 3.2H8A3.2 3.2 0 0 1 4.8 26V15.4Z" fill="var(--brass)" stroke="var(--brass)" strokeWidth="1.2" strokeLinejoin="round" />
-      <circle cx="16" cy="12.3" r="1.5" fill="var(--background)" />
-      <g fill="var(--brass-foreground)">
-        <ellipse cx="16" cy="23.4" rx="3.5" ry="2.7" />
-        <circle cx="11.9" cy="19.6" r="1.35" />
-        <circle cx="14.6" cy="17.7" r="1.35" />
-        <circle cx="17.4" cy="17.7" r="1.35" />
-        <circle cx="20.1" cy="19.6" r="1.35" />
-      </g>
+    <svg viewBox="0 0 30 34" aria-hidden className={cn("h-8 w-7 shrink-0", className)}>
+      <path d="M2 32V15a13 13 0 0 1 26 0v17Z" fill="var(--secondary)" stroke="var(--primary)" strokeWidth="2.5" />
+      <path d="M15 3v29M2 19h26" stroke="var(--primary)" strokeWidth="2" />
     </svg>
   );
 }
 
 export function Logo({ className }: { className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-2", className)}>
+    <span className={cn("inline-flex items-center gap-2.5", className)}>
       <LogoMark />
-      <span className="font-heading text-lg font-semibold tracking-tight whitespace-nowrap">Novi dom</span>
+      <span className="font-heading text-[1.4rem] font-semibold whitespace-nowrap">Novi dom</span>
     </span>
   );
+}
+
+// Obok: eliptičen zgornji polmer (50 % širine × 40 % višine). Z »rounded-t-full« bi brskalnik
+// sorazmerno pomanjšal vse polmere (vsota presega širino) in spodnji robovi ne bi bili zaobljeni.
+const ARCH = "rounded-tl-[50%_40%] rounded-tr-[50%_40%]";
+
+/**
+ * Fotografija živali v obliki obokanega okna (podpis podobe »Okno domov«).
+ * `framed` doda svetlo lila okvir okoli loka.
+ */
+export function ArchPhoto({
+  src,
+  alt,
+  className,
+  imgClassName,
+  framed = false,
+}: {
+  src: string | null;
+  alt: string;
+  className?: string;
+  imgClassName?: string;
+  framed?: boolean;
+}) {
+  const img = src ? (
+    // eslint-disable-next-line @next/next/no-img-element -- slike iz lokalne shrambe in seeda
+    <img src={src} alt={alt} className={cn("block size-full rounded-b-2xl object-cover", ARCH, imgClassName)} />
+  ) : (
+    <div role="img" aria-label={alt} className={cn("size-full rounded-b-2xl bg-secondary", ARCH, imgClassName)} />
+  );
+  return framed ? <div className={cn("rounded-b-3xl bg-secondary p-2.5", ARCH, className)}>{img}</div> : <div className={className}>{img}</div>;
 }
